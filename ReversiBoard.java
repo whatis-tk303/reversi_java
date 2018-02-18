@@ -14,6 +14,7 @@ import javax.swing.*;
  */
 class ReversiPiece
 {
+	  /* @brief	駒の種別 { 黒 | 白 } */
 	  public enum Type {
 		 BLACK,
 		 WHITE,
@@ -21,19 +22,17 @@ class ReversiPiece
 
 	  private Type m_type;
 
-
-	  public static ReversiPiece createPiece(Type type)
-	  {
-		 return new ReversiPiece(type);
-	  }
-
-	  /* constructor */
+	  /* @brief	constructor */
 	  public ReversiPiece(Type type)
 	  {
 		 m_type = type;
 	  }
 
-	  /**/
+	  /* @brief	駒を描画する
+	   * @param [in]	g    - 描画対象のグラフィックス
+	   * @param [in]	pos  - 描画する位置（左上隅）
+	   * @param [in]	size - 描画する矩形のサイズ（幅、高さ）
+	   */
 	  public void rendering(Graphics g, Point pos, Dimension size)
 	  {
 		 Color color;
