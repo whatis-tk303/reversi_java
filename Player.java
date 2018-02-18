@@ -13,17 +13,24 @@ import java.awt.*;
  */
 class Player
 {
-	  protected ReversiBoard m_board;				/* 盤面 */
-	  protected ReversiPiece.Type m_piece_type;	/* 自分の駒の色 { BLACK | WHITE }*/
-
-	  /* constructor */
-	  public Player(ReversiBoard board, ReversiPiece.Type piece_type)
-	  {
-		 m_board = board;
-		 m_piece_type = piece_type;
+	  public enum Type {
+		 HUMAN,
+		 COMPUTER
 	  }
 
+	  protected ReversiBoard m_board;			/* 盤面 */
+	  protected String m_name;					/* プレイヤーの名前 */
+	  protected Type m_player_type;				/* プレイヤー { HUMAN | COMPUTER} */
+	  protected ReversiPiece.Type m_piece_type;	/* 自分の駒の色 { BLACK | WHITE } ※ 黒が先手 */
 
+	  /* constructor */
+	  public Player(ReversiBoard board, String name, Player.Type player_type, ReversiPiece.Type piece_type)
+	  {
+		 m_board = board;
+		 m_name = name;
+		 m_player_type = player_type;
+		 m_piece_type = piece_type;
+	  }
 }
 
 
@@ -34,9 +41,9 @@ class Player
 class HumanPlayer extends Player
 {
 	  /* constructor */
-	  public HumanPlayer(ReversiBoard board, ReversiPiece.Type piece_type)
+	  public HumanPlayer(ReversiBoard board, String name, ReversiPiece.Type piece_type)
 	  {
-		 super(board, piece_type);
+		 super(board, name, Player.Type.HUMAN, piece_type);
 	  }
 
 	  /* 駒を置く場所を教える */
@@ -55,9 +62,9 @@ class HumanPlayer extends Player
 class AutoPlayer extends Player
 {
 	  /* constructor */
-	  public AutoPlayer(ReversiBoard board, ReversiPiece.Type piece_type)
+	  public AutoPlayer(ReversiBoard board, String name, ReversiPiece.Type piece_type)
 	  {
-		 super(board, piece_type);
+		 super(board, name, Player.Type.COMPUTER, piece_type);
 	  }
 
 	  /* 自分で駒を置く場所を考える */

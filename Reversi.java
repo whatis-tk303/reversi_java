@@ -35,13 +35,44 @@ class Reversi
 	  /* 準備：先手、後手を決める */
 	  private static void prepare(Players players)
 	  {
-		 players.first = new HumanPlayer(s_board, ReversiPiece.Type.BLACK);
-		 players.second = new AutoPlayer(s_board, ReversiPiece.Type.WHITE);
+		 Object[] options = {
+			"Human(A) vs Human(B)",
+			"Human vs Computer",
+			"Computer vs Human",
+			"Computer(A) vs Computer(B)",
+		 };
 
-		 JOptionPane.showMessageDialog(s_frame,
-									   (Object)new JLabel("prepare"),
-									   "prepare",
-									   JOptionPane.PLAIN_MESSAGE);
+		 int ret = JOptionPane.showOptionDialog(
+			s_frame,
+			"???",
+			"select play type:",
+			JOptionPane.DEFAULT_OPTION,
+			JOptionPane.WARNING_MESSAGE,
+			null,
+			options,
+			options[0]);
+
+		 switch(ret)
+		 {
+			case 0: /* "Human(A) vs Human(B)" */
+			   players.first  = new HumanPlayer(s_board, "Human(A)", ReversiPiece.Type.BLACK);
+			   players.second = new HumanPlayer(s_board, "Human(B)", ReversiPiece.Type.WHITE);
+			   break;
+			case 1: /* "Human vs Computer" */
+			   players.first  = new HumanPlayer(s_board, "Human",    ReversiPiece.Type.BLACK);
+			   players.second = new AutoPlayer(s_board,  "Computer", ReversiPiece.Type.WHITE);
+			   break;
+			case 2: /* "Computer vs Human" */
+			   players.first  = new AutoPlayer(s_board,  "Computer", ReversiPiece.Type.BLACK);
+			   players.second = new HumanPlayer(s_board, "Human",    ReversiPiece.Type.WHITE);
+			   break;
+			case 3: /* "Computer(A) vs Computer(B)" */
+			   players.first  = new AutoPlayer(s_board,  "Computer", ReversiPiece.Type.BLACK);
+			   players.second = new AutoPlayer(s_board,  "Computer", ReversiPiece.Type.WHITE);
+			   break;
+		 }
+
+		 System.out.printf("ret = %d\n", ret);
 	  }
 
 	  /* 結果表示： 勝敗を表示する */
@@ -51,12 +82,13 @@ class Reversi
 		 int ret = JOptionPane.showOptionDialog(
 			s_frame,
 			"are you continue game ?",
-			"play result",
+			"play result:",
 			JOptionPane.DEFAULT_OPTION,
 			JOptionPane.WARNING_MESSAGE,
 			null,
 			options,
 			options[0]);
+
 		 if (ret == 1)
 		 { /* "exit game" が選択された → このアプリケーションを終了する */
 			System.exit(0);

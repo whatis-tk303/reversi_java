@@ -62,5 +62,23 @@ public class GameManager
 		 m_board.setPiece(3, 4, new ReversiPiece(ReversiPiece.Type.WHITE));
 		 m_board.setPiece(4, 4, new ReversiPiece(ReversiPiece.Type.BLACK));
 
+		 try
+		 {
+			int count = 0;
+			while(true)
+			{
+			   Thread.sleep(1000);
+			   count += 1;
+			   System.out.printf("play count = %d\n", count);
+			   
+			   if (20 <= count)
+			   {
+				  break;
+			   }
+			}
+		 }
+		 catch(Exception e)
+		 {
+		 }
 	  }
 }
