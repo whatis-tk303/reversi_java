@@ -13,5 +13,9 @@ all:
 	$(JAVAC) Reversi.java
 
 
+
+clean:
+	$(RM) -rf *.class *~
+
 exec: $(TARGET).class
 	java Reversi
