@@ -44,20 +44,26 @@ public class GameManager
 	  private Players m_players;		/* プレイヤー２人 */
 	  private Player m_current_player;	/* 現在のプレイヤー */
 
-	  /* @brief	constructor */
+	  /********************************************************************************
+	   * @brief	constructor
+	   */
 	  public GameManager()
 	  {
-		 /* TODO: 20180219  do nothing ? */
+		 /* do nothing */
 	  }
 
-	  /* @brief	現在のプレイヤーを取得する */
+	  /********************************************************************************
+	   * @brief	現在のプレイヤーを取得する
+	   */
 	  public Player getCurrentPlayer()
 	  {
 		 return m_current_player;
 	  }
 
-	  /* @brief	ゲームを開始する
-	   * @note	１ゲームが終わるまで返って来ない */
+	  /********************************************************************************
+	   * @brief	ゲームを開始する
+	   * @note	１ゲームが終わるまで返って来ない
+	   */
 	  public void start(ReversiBoard board, Players players)
 	  {
 		 m_board = board;
@@ -80,7 +86,11 @@ public class GameManager
 			System.out.println("starting this game.");
 			while(true)
 			{
+			   Thread.sleep(1000);  /* for debug: */
+
 			   /* 現在のプレイヤーが駒を置くのを待って、プレイヤーを交代する */
+			   System.out.println("- - - - - - - - - - - - - - - - - "); /* for debug: */
+			   System.out.printf("%s's turn.\n", m_current_player); /* for debug: */
 			   boolean success = waitPlaying(m_current_player);
 			   if (success)
 			   {
@@ -97,28 +107,21 @@ public class GameManager
 
 			   /* 攻守交替 */
 			   m_current_player = changePlayer();
-
-			   /* for debug: */
-			   Thread.sleep(1000);
-			   count += 1;
-			   System.out.printf("play count = %d\n", count);
-			   
-			   if (20 <= count)
-			   {
-				  break;
-			   }
 			}
 		 }
 		 catch(Exception e)
 		 {
+			System.out.println(e);
 		 }
 
 		 /* このゲームが終了した */
-		 /* TODO: 20180218 */
+		 /* TODO: 20180218  このゲームが終了したことを何か表示する？ */
 		 System.out.println("ending this game.");
 	  }
 
-	  /* @brief	プレイヤーを交代する */
+	  /********************************************************************************
+	   * @brief	プレイヤーを交代する
+	   */
 	  private Player changePlayer()
 	  {
 		 return (m_current_player == m_players.first)
@@ -126,23 +129,39 @@ public class GameManager
 			: m_players.first;
 	  }
 
-	  /* @brief	現在のプレイヤーが駒を置く（あるいは置けないことが確定する）まで待つ */
+	  /********************************************************************************
+	   * @brief	現在のプレイヤーが駒を置く（あるいは置けないことが確定する）まで待つ
+	   */
 	  private boolean waitPlaying(Player player)
 	  {
+		 /* TODO: 20180220  ひっくり返せる位置と、ひっくり返せる相手駒の配列のマップを
+		                    ここで取得してから think()に渡す */
+		 HashMap<Point, Vector<Point>> candidate_pos_map;
+		 candidate_pos_map = m_board.getCandidatePos(player.getPieceType());
+
+/* #if 1 : for debug: 20180220  ひっくり返せる候補を見てみる */
+		 System.out.println(candidate_pos_map);
+/* #endif : for debug: 20180220  ひっくり返せる候補を見てみる */
+
 		 /* 現在のプレイヤーが駒を置く位置を考える */
-		 Point pos = player.think();
+		 /* TODO: 20180220  think()はスレッドで実行し、終了するまで待つ */
+		 
+		 Point pos = player.think(candidate_pos_map);
 		 
 		 if (pos != null)
-		 { /* 指定された位置に駒を置く */
+		 { /* 指定された位置に自分の駒を置く */
 			ReversiPiece piece = new ReversiPiece(player.getPieceType());
 			m_board.setPiece(pos.x, pos.y, piece);
-			/* TODO: 20180219  ここで駒をひっくり返すアニメーションを実行する（？） */
 			m_board.repaint();
-			return true;
+
+			/* 相手の駒をひっくり返す */
+			Vector<Point> pos_turn = candidate_pos_map.get(pos);
+			/* TODO: 20180219  ここで駒をひっくり返す（アニメーションも実行する？） */
+			return true;	/* 駒が置けた */
 		 }
 		 else
 		 {
-			return false;  /* TODO: 20180219  駒が置けたら trueを返す */
+			return false;	/* 駒が置けなかった！ */
 		 }
 	  }
 }

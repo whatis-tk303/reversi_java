@@ -55,20 +55,20 @@ class Reversi
 		 switch(ret)
 		 {
 			case 0: /* "Human(A) vs Human(B)" */
-			   players.first  = new HumanPlayer(s_board, "Human(A)", ReversiPiece.Type.BLACK);
-			   players.second = new HumanPlayer(s_board, "Human(B)", ReversiPiece.Type.WHITE);
+			   players.first  = new HumanPlayer(s_board, "Human(B)",    ReversiPiece.Type.BLACK);
+			   players.second = new HumanPlayer(s_board, "Human(W)",    ReversiPiece.Type.WHITE);
 			   break;
 			case 1: /* "Human vs Computer" */
-			   players.first  = new HumanPlayer(s_board, "Human",    ReversiPiece.Type.BLACK);
-			   players.second = new AutoPlayer(s_board,  "Computer", ReversiPiece.Type.WHITE);
+			   players.first  = new HumanPlayer(s_board, "Human(B)",    ReversiPiece.Type.BLACK);
+			   players.second = new AutoPlayer(s_board,  "Computer(W)", ReversiPiece.Type.WHITE);
 			   break;
 			case 2: /* "Computer vs Human" */
-			   players.first  = new AutoPlayer(s_board,  "Computer", ReversiPiece.Type.BLACK);
-			   players.second = new HumanPlayer(s_board, "Human",    ReversiPiece.Type.WHITE);
+			   players.first  = new AutoPlayer(s_board,  "Computer(B)", ReversiPiece.Type.BLACK);
+			   players.second = new HumanPlayer(s_board, "Human(W)",    ReversiPiece.Type.WHITE);
 			   break;
 			case 3: /* "Computer(A) vs Computer(B)" */
-			   players.first  = new AutoPlayer(s_board,  "Computer", ReversiPiece.Type.BLACK);
-			   players.second = new AutoPlayer(s_board,  "Computer", ReversiPiece.Type.WHITE);
+			   players.first  = new AutoPlayer(s_board,  "Computer(B)", ReversiPiece.Type.BLACK);
+			   players.second = new AutoPlayer(s_board,  "Computer(W)", ReversiPiece.Type.WHITE);
 			   break;
 		 }
 

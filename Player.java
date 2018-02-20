@@ -34,14 +34,12 @@ abstract class Player
 
 	  /* @brief	駒を置く場所を考える
 	   * @return	駒を置く場所、置けない場合は null */
-	  public Point think()
+	  /* TODO: 20180220  think()へ HashMap<Point, Vector<Point>> を渡せるようにする */
+	  public Point think(HashMap<Point, Vector<Point>> candidate_pos_map)
 	  {
-		 /* TODO: 20180219  駒を置ける場所をリストアップして avail_pos へ格納する */
-		 Vector<Point> avail_pos = m_board.getAvailablePos(m_piece_type);
-
-		 if (avail_pos.size() != 0)
+		 if (candidate_pos_map.size() != 0)
 		 {
-			return doThink(avail_pos);
+			return doThink(candidate_pos_map);
 		 }
 		 else
 		 {
@@ -55,10 +53,16 @@ abstract class Player
 		 return m_piece_type;
 	  }
 
+	  /* @brief	駒の種別を取得する */
+	  @Override /*  */
+	  public String toString()
+	  {
+		 return m_name;
+	  }
+
 	  /* @brief	駒を置く場所を考える
 	   * @return	駒を置く場所、置けない場合は null */
-	  abstract protected Point doThink(Vector<Point> avail_pos);
-	  
+	  abstract protected Point doThink(HashMap<Point, Vector<Point>> candidate_pos_map);
 }
 
 
@@ -76,18 +80,17 @@ class HumanPlayer extends Player
 
 	  /* @brief	駒を置く場所を考える */
 	  @Override
-	  protected Point doThink(Vector<Point> avail_pos)
+	  protected Point doThink(HashMap<Point, Vector<Point>> candidate_pos_map)
 	  {
-		 Point pos = new Point(0, 0);
+		 Point pos = null;
 		 /* TODO: 20180218  人間が駒を置ける場所を教えるまで処理を返さない（？） */
 		 return pos;
 	  }
 
 	  /* @brief	（人間が）駒を置く場所を教える */
-	  public void setPiece()
+	  public void setPiece(int x, int y)
 	  {
-		 /* 駒を置ける場所を取得する */
-		 Vector<Point> pt = m_board.getAvailablePos(m_piece_type);
+		 /* TODO: 20180220  駒を置ける場所を取得する */
 	  }
 }
 
@@ -106,9 +109,9 @@ class AutoPlayer extends Player
 
 	  /* @brief	駒を置く場所を考える */
 	  @Override
-	  protected Point doThink(Vector<Point> avail_pos)
+	  protected Point doThink(HashMap<Point, Vector<Point>> candidate_pos_map)
 	  {
-		 Point pos = new Point(0, 0);
+		 Point pos = null;
 		 /* TODO: 20180218  コンピューターは駒を置ける場所を自力で探す */
 		 return pos;
 	  }
