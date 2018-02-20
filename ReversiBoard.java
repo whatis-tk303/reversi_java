@@ -176,6 +176,12 @@ class ReversiBoard extends JPanel
 		 {
 			for (x=0; x<WIDTH; x++)
 			{
+			   ReversiPiece piece_target = m_piece_matrix[x][y];
+			   if (piece_target != null)
+			   { /* 既に駒が置いてあったら置けない → そこは調べない */
+				  continue;
+			   }
+
 			   Point pos_candidate = null;
 
 			   for (Point dir : AROUND_8DIR)
@@ -187,8 +193,8 @@ class ReversiBoard extends JPanel
 				  if ((0 <= xx) && (xx < WIDTH) && (0 <= yy) && (yy < HEIGHT))
 				  {
 					 /* 隣の位置に相手の駒が１つでも存在したら、ひっくり返せる候補の位置とする */
-					 ReversiPiece piece = m_piece_matrix[xx][yy];
-					 if ((piece != null) && (piece.getType() != piece_type))
+					 ReversiPiece piece_next = m_piece_matrix[xx][yy];
+					 if ((piece_next != null) && (piece_next.getType() != piece_type))
 					 {
 						pos_candidate = new Point(x, y);
 						break;

@@ -80,7 +80,6 @@ public class GameManager
 		 
 		 try
 		 {
-			int count = 0;
 			int count_fail = 0;	/* 駒が置けなかった場合が連続したかを確認するカウンタ */
 
 			System.out.println("starting this game.");
@@ -134,18 +133,15 @@ public class GameManager
 	   */
 	  private boolean waitPlaying(Player player)
 	  {
-		 /* TODO: 20180220  ひっくり返せる位置と、ひっくり返せる相手駒の配列のマップを
-		                    ここで取得してから think()に渡す */
+		 /* ひっくり返せる位置と、ひっくり返せる相手駒の配列のマップをここで
+		  * 取得してから think()に渡す */
 		 HashMap<Point, Vector<Point>> candidate_pos_map;
 		 candidate_pos_map = m_board.getCandidatePos(player.getPieceType());
 
-/* #if 1 : for debug: 20180220  ひっくり返せる候補を見てみる */
-		 System.out.println(candidate_pos_map);
-/* #endif : for debug: 20180220  ひっくり返せる候補を見てみる */
+		 System.out.println(candidate_pos_map); /* for debug: 20180220  ひっくり返せる候補 */
 
 		 /* 現在のプレイヤーが駒を置く位置を考える */
 		 /* TODO: 20180220  think()はスレッドで実行し、終了するまで待つ */
-		 
 		 Point pos = player.think(candidate_pos_map);
 		 
 		 if (pos != null)
@@ -155,8 +151,13 @@ public class GameManager
 			m_board.repaint();
 
 			/* 相手の駒をひっくり返す */
-			Vector<Point> pos_turn = candidate_pos_map.get(pos);
+			Vector<Point> pos_turn_pieces = candidate_pos_map.get(pos);
 			/* TODO: 20180219  ここで駒をひっくり返す（アニメーションも実行する？） */
+			for (Point pos_turn : pos_turn_pieces)
+			{
+			   m_board.setPiece(pos_turn.x, pos_turn.y, new ReversiPiece(player.getPieceType()));
+			}
+
 			return true;	/* 駒が置けた */
 		 }
 		 else

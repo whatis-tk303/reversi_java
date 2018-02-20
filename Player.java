@@ -113,6 +113,10 @@ class AutoPlayer extends Player
 	  {
 		 Point pos = null;
 		 /* TODO: 20180218  コンピューターは駒を置ける場所を自力で探す */
+		 int num = candidate_pos_map.size();
+		 int idx = (new Random()).nextInt(num);
+		 pos = (Point)(candidate_pos_map.keySet().toArray()[idx]);
+
 		 return pos;
 	  }
 }
