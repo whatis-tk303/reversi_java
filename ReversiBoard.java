@@ -242,7 +242,7 @@ class ReversiBoard extends JPanel
 
 			for (int n=0; n<(8-1); n++)  /* 一方向で調べられる最大数＝(8-1) */
 			{
-			   /* TODO: 20180220  一方向ずつひっくり返せる相手駒があるか探す */
+			   /* 一方向ずつひっくり返せる相手駒があるか探す */
 			   pos_find.translate(dir.x, dir.y);
 			   int xx = pos_find.x;
 			   int yy = pos_find.y;

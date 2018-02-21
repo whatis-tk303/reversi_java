@@ -34,7 +34,6 @@ abstract class Player
 
 	  /* @brief	駒を置く場所を考える
 	   * @return	駒を置く場所、置けない場合は null */
-	  /* TODO: 20180220  think()へ HashMap<Point, Vector<Point>> を渡せるようにする */
 	  public Point think(HashMap<Point, Vector<Point>> candidate_pos_map)
 	  {
 		 if (candidate_pos_map.size() != 0)
@@ -112,7 +111,8 @@ class AutoPlayer extends Player
 	  protected Point doThink(HashMap<Point, Vector<Point>> candidate_pos_map)
 	  {
 		 Point pos = null;
-		 /* TODO: 20180218  コンピューターは駒を置ける場所を自力で探す */
+		 /* TODO: 20180218  コンピューターは駒を置ける場所を自力で探す
+		  * （今はとりあえずランダムで置けるところを選択して置く） */
 		 int num = candidate_pos_map.size();
 		 int idx = (new Random()).nextInt(num);
 		 pos = (Point)(candidate_pos_map.keySet().toArray()[idx]);

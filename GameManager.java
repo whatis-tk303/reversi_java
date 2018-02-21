@@ -85,7 +85,7 @@ public class GameManager
 			System.out.println("starting this game.");
 			while(true)
 			{
-			   Thread.sleep(1000);  /* for debug: */
+			   Thread.sleep(500);  /* for debug: */
 
 			   /* 現在のプレイヤーが駒を置くのを待って、プレイヤーを交代する */
 			   System.out.println("- - - - - - - - - - - - - - - - - "); /* for debug: */
@@ -156,6 +156,11 @@ public class GameManager
 			for (Point pos_turn : pos_turn_pieces)
 			{
 			   m_board.setPiece(pos_turn.x, pos_turn.y, new ReversiPiece(player.getPieceType()));
+			   m_board.repaint();
+			   try
+			   {
+				  Thread.sleep(200);
+			   } catch(Exception e) {}
 			}
 
 			return true;	/* 駒が置けた */
