@@ -28,7 +28,10 @@ class Reversi
 	  private static GameManager s_game;
 	  private static Players s_players;
 
-	  /* 準備：先手、後手を決める */
+	  /********************************************************************************
+	   * @brief		準備：先手、後手を決める
+	   * @param [out]	決定したプレイヤー（先手・後手）を設定して返す
+	   */
 	  private static void prepare(Players players)
 	  {
 		 Object[] options = {
@@ -71,7 +74,9 @@ class Reversi
 		 System.out.printf("ret = %d\n", ret);
 	  }
 
-	  /* 結果表示： 勝敗を表示する */
+	  /********************************************************************************
+	   * @brief		結果表示： 勝敗を表示する
+	   */
 	  private static void showResult(ReversiBoard board, Players players)
 	  {
 		 Object[] options = {"play next game", "exit game"};
@@ -91,18 +96,21 @@ class Reversi
 		 }
 	  }
 
-	  /* アプリケーション・メイン*/
+	  /********************************************************************************
+	   * @brief		アプリケーション・メイン
+	   */
 	  public static void main(String[] args)
 	  {
 		 s_frame = new JFrame("Reversi");
+		 //s_status_panel = new StatusPanel();
 		 s_board = new ReversiBoard();
 		 s_game = new GameManager();
 		 s_players = new Players();
 
+		 s_frame.setLocationByPlatform(true);
 		 s_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		 s_frame.add(s_board);
 		 s_frame.pack();
-		 s_frame.setLocationByPlatform(true);
 		 s_frame.setVisible(true);
 
 		 while(true)
@@ -111,7 +119,6 @@ class Reversi
 			prepare(s_players);
 			System.out.println(s_players.first);
 			System.out.println(s_players.second);
-			//System.exit(1);
 
 			/* ゲーム開始 */
 			s_game.start(s_board, s_players);

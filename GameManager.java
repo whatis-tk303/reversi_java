@@ -12,6 +12,13 @@
  *			start				ゲームを開始する
  *			changePlayer		プレイヤーを交代する
  *			waitPlaying			現在のプレイヤーが駒を置く（あるいは置けないことが確定する）まで待つ
+ *
+ *	class Players : ゲームプレイヤー（２人）を保持する
+ *	＜責務＞
+ *	  - ゲームプレイヤー（２人）を保持する
+ *			(constructor)	
+ *			setFirst		先手プレイヤーをセットする
+ *			setSecond		後手プレイヤーをセットする
  */
 
 import java.util.*;
