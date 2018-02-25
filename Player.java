@@ -36,6 +36,11 @@ abstract class Player
 	   * @return	駒を置く場所、置けない場合は null */
 	  public Point think(HashMap<Point, Vector<Point>> candidate_pos_map)
 	  {
+		 try /* for debug: 20180221 時間のかかる処理（ユーザー入力など）をシミュレート */
+		 {
+			Thread.sleep(1000);
+		 } catch(Exception e) { System.out.println(e); }
+
 		 if (candidate_pos_map.size() != 0)
 		 {
 			return doThink(candidate_pos_map);

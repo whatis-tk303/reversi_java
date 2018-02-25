@@ -128,22 +128,39 @@ public class GameManager
 			: m_players.first;
 	  }
 
+	  private Point m_pos_decided;
+	  private void setDecidedPos(Point pos) { m_pos_decided = pos; }
+	  private Point getDecidedPos() { return m_pos_decided; }
+
 	  /********************************************************************************
 	   * @brief	現在のプレイヤーが駒を置く（あるいは置けないことが確定する）まで待つ
 	   */
-	  private boolean waitPlaying(Player player)
+	  private boolean waitPlaying(final Player player)
 	  {
 		 /* ひっくり返せる位置と、ひっくり返せる相手駒の配列のマップをここで
 		  * 取得してから think()に渡す */
-		 HashMap<Point, Vector<Point>> candidate_pos_map;
+		 final HashMap<Point, Vector<Point>> candidate_pos_map;
 		 candidate_pos_map = m_board.getCandidatePos(player.getPieceType());
 
 		 System.out.println(candidate_pos_map); /* for debug: 20180220  ひっくり返せる候補 */
 
 		 /* 現在のプレイヤーが駒を置く位置を考える */
-		 /* TODO: 20180220  think()はスレッドで実行し、終了するまで待つ */
-		 Point pos = player.think(candidate_pos_map);
+		 System.out.println("begining to think " + player + " ...");  /* for debug: 20180221 */
+		 Thread thread = new Thread(new Runnable(){
+				  @Override
+				  public void run() {
+					 Point pos = player.think(candidate_pos_map);
+					 setDecidedPos(pos);
+				  }
+			});
+		 try
+		 {
+			thread.start();
+			thread.join();
+		 } catch(Exception e) { System.out.println(e); }
+		 System.out.println("done.");  /* for debug: 20180221 */
 		 
+		 Point pos = getDecidedPos();
 		 if (pos != null)
 		 { /* 指定された位置に自分の駒を置く */
 			ReversiPiece piece = new ReversiPiece(player.getPieceType());
