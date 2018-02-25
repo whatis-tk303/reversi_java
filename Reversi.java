@@ -24,6 +24,7 @@ import javax.swing.*;
 class Reversi
 {
 	  private static JFrame s_frame;
+	  private static StatusPanel s_status_panel;
 	  private static ReversiBoard s_board;
 	  private static GameManager s_game;
 	  private static Players s_players;
@@ -102,14 +103,15 @@ class Reversi
 	  public static void main(String[] args)
 	  {
 		 s_frame = new JFrame("Reversi");
-		 //s_status_panel = new StatusPanel();
 		 s_board = new ReversiBoard();
-		 s_game = new GameManager();
+		 s_status_panel = new StatusPanel();
+		 s_game = new GameManager(s_status_panel);
 		 s_players = new Players();
 
 		 s_frame.setLocationByPlatform(true);
 		 s_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		 s_frame.add(s_board);
+		 s_frame.add(s_status_panel, BorderLayout.NORTH);
+		 s_frame.add(s_board, BorderLayout.CENTER);
 		 s_frame.pack();
 		 s_frame.setVisible(true);
 

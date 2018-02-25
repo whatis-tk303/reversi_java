@@ -60,13 +60,16 @@ public class GameManager
 	  private ReversiBoard m_board;
 	  private Players m_players;		/* プレイヤー２人 */
 	  private Player m_current_player;	/* 現在のプレイヤー */
+	  private StatusNotifier m_status_notifier;		/* ゲームステータスを通知する */
 
 	  /********************************************************************************
 	   * @brief	constructor
+	   * @param [in]	obs - ゲーム進行を監視するオブジェクト
 	   */
-	  public GameManager()
+	  public GameManager(Observer obs)
 	  {
-		 /* do nothing */
+		 m_status_notifier = new StatusNotifier();
+		 m_status_notifier.addObserver(obs);
 	  }
 
 	  /********************************************************************************
@@ -104,6 +107,9 @@ public class GameManager
 			{
 			   Thread.sleep(500);  /* for debug: */
 
+			   /* 現在のゲームステータスを通知する */
+			   m_status_notifier.notify(m_board);
+
 			   /* 現在のプレイヤーが駒を置くのを待って、プレイヤーを交代する */
 			   System.out.println("- - - - - - - - - - - - - - - - - "); /* for debug: */
 			   System.out.printf("%s's turn.\n", m_current_player); /* for debug: */
@@ -132,6 +138,8 @@ public class GameManager
 
 		 /* このゲームが終了した */
 		 /* TODO: 20180218  このゲームが終了したことを何か表示する？ */
+		 /* ゲーム終了時のゲームステータスを通知する */
+		 m_status_notifier.notify(m_board);
 		 System.out.println("ending this game.");
 	  }
 

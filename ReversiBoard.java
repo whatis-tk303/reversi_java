@@ -10,6 +10,7 @@
  *			(constructor)	盤面を生成する
  *			reset			盤面をリセットする
  *			getPiece		指定された位置にある駒を参照する
+ *			countPieces		指定された種別の駒の数を数える
  *
  *	  - 駒を配置し描画する
  *			setPiece		盤面に駒を置く
@@ -149,6 +150,34 @@ class ReversiBoard extends JPanel
 	  public ReversiPiece getPiece(int x, int y)
 	  {
 		 return m_piece_matrix[x][y];
+	  }
+
+	  /********************************************************************************
+	   * @brief	指定された位置にある駒を参照する
+	   * @param [in]	piece_type - 駒の種別
+	   * @return	盤面上の駒の数
+	   */
+	  public int countPieces(ReversiPiece.Type piece_type)
+	  {
+		 int num = 0;
+		 int x, y;
+
+		 for (y=0; y<HEIGHT; y++)
+		 {
+			for (x=0; x<WIDTH; x++)
+			{
+			   ReversiPiece piece = getPiece(x, y);
+			   if (piece != null)
+			   {
+				  if (piece_type == piece.getType())
+				  {
+					 num += 1;
+				  }
+			   }
+			}
+		 }
+
+		 return num;
 	  }
 
 	  /********************************************************************************
