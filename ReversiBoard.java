@@ -119,7 +119,7 @@ class ReversiBoard extends JPanel
 	  private ReversiPiece[][] m_piece_matrix;	/* 盤面の駒を管理する配列 */
 	  private Icon m_icon_hand;					/* 指し手のイメージアイコン */
 	  private boolean m_isVisibleHand;			/* 盤面上にハンドアイコンを表示するフラグ */
-	  protected HumanPlayer m_player_to_notify;
+	  private Player m_player_to_notify;
 
 	  /********************************************************************************
 	   * @brief	constructor
@@ -131,21 +131,25 @@ class ReversiBoard extends JPanel
 		 m_icon_hand = new ImageIcon("icon_hand.png");
 		 m_isVisibleHand = false;
 
+		 /* 盤面をクリックした時の動作：人間プレイヤーの場合のみ有効 */
 		 addMouseListener(new MouseAdapter(){
 				  @Override
 				  public void mouseClicked(MouseEvent e)
 				  {
-					 Point pos_scrn = e.getPoint();
-					 Point pos = convertComponentPosToBoardPos(pos_scrn);
-
-					 if (m_player_to_notify.isAvailablePos(pos))
+					 if (m_player_to_notify != null)
 					 {
-						System.out.printf("place here (%d,%d).\n", pos.x, pos.y);
-						m_player_to_notify.setPos(pos);
-					 }
-					 else
-					 {
-						System.out.printf("can not place here (%d,%d) !\n", pos.x, pos.y);
+						HumanPlayer hp = (HumanPlayer)m_player_to_notify;
+						Point pos_scrn = e.getPoint();
+						Point pos = convertComponentPosToBoardPos(pos_scrn);
+						if (hp.isAvailablePos(pos))
+						{
+						   System.out.printf("place here (%d,%d).\n", pos.x, pos.y);
+						   hp.setPos(pos);
+						}
+						else
+						{
+						   System.out.printf("can not place here (%d,%d) !\n", pos.x, pos.y);
+						}
 					 }
 				  }
 			});
@@ -449,11 +453,12 @@ class ReversiBoard extends JPanel
 	  }
 
 	  /********************************************************************************
-	   * @brief	駒を置こうとしたことを通知するスレッドをセットする
-	   * @note	AutoPlayerはこのメソッドを呼び出すことはない
+	   * @brief	駒を置こうとしたことを通知したいプレイヤーをセットする
+	   * @note	AutoPlayerは自分で駒を置くのでセットする必要はない
 	   */
 	  public void setNotifier(Player player)
 	  {
-		 m_player_to_notify = player.isAutoPlay() ? null : (HumanPlayer)player;
+		 //m_player_to_notify = player.isAutoPlay() ? null : (HumanPlayer)player;
+		 m_player_to_notify = player.isAutoPlay() ? null : player;
 	  }
 }
