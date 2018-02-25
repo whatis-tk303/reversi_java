@@ -116,6 +116,8 @@ class ReversiBoard extends JPanel
 	  };
 
 	  private ReversiPiece[][] m_piece_matrix;	/* 盤面の駒を管理する配列 */
+	  private Icon m_icon_hand;					/* 指し手のイメージアイコン */
+	  private boolean m_isVisibleHand;			/* 盤面上にハンドアイコンを表示するフラグ */
 
 	  /********************************************************************************
 	   * @brief	constructor
@@ -124,9 +126,21 @@ class ReversiBoard extends JPanel
 	  {
 		 m_piece_matrix = new ReversiPiece[8][8]; /* { null | Type.Black | Type.WHITE } */
 
+		 m_icon_hand = new ImageIcon("icon_hand.png");
+		 m_isVisibleHand =true; /* todo: 20180225  人間の指し手の場合にtrueにする */
+
 		 Dimension size = new Dimension(400, 400);	/* 画面上の盤面のサイズ（ピクセル） */
 		 setSize(size);
 		 setPreferredSize(size);
+	  }
+
+	  /********************************************************************************
+	   * @brief	ハンドアイコンの表示／非表示を切り替える
+	   */
+	  public void enableVisibleHand(boolean en)
+	  {
+		 m_isVisibleHand = en;
+		 repaint();
 	  }
 
 	  /********************************************************************************
@@ -381,5 +395,21 @@ class ReversiBoard extends JPanel
 			}
 		 }
 
+		 /* 盤面上に指し手を描画する */
+		 if (m_isVisibleHand)
+		 {
+			Point pt_cursor = MouseInfo.getPointerInfo().getLocation();
+			Point pt_component = getLocationOnScreen();
+			pt_cursor.x -= pt_component.x;
+			pt_cursor.y -= pt_component.y;
+
+			Rectangle rect = new Rectangle(size);
+			if (rect.contains(pt_cursor))
+			{
+			   int x_icon = ((pt_cursor.x / d) * d) + ((d - m_icon_hand.getIconWidth()) / 2) + 5;
+			   int y_icon = ((pt_cursor.y / d) * d) + ((d - m_icon_hand.getIconHeight()) / 2) + 12;
+			   m_icon_hand.paintIcon(this, g, x_icon, y_icon);
+			}
+		 }
 	  }
 }
