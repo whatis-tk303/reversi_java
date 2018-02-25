@@ -30,6 +30,7 @@
 
 import java.util.*;
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
 
@@ -118,6 +119,7 @@ class ReversiBoard extends JPanel
 	  private ReversiPiece[][] m_piece_matrix;	/* 盤面の駒を管理する配列 */
 	  private Icon m_icon_hand;					/* 指し手のイメージアイコン */
 	  private boolean m_isVisibleHand;			/* 盤面上にハンドアイコンを表示するフラグ */
+	  protected HumanPlayer m_player_to_notify;
 
 	  /********************************************************************************
 	   * @brief	constructor
@@ -127,11 +129,43 @@ class ReversiBoard extends JPanel
 		 m_piece_matrix = new ReversiPiece[8][8]; /* { null | Type.Black | Type.WHITE } */
 
 		 m_icon_hand = new ImageIcon("icon_hand.png");
-		 m_isVisibleHand =true; /* todo: 20180225  人間の指し手の場合にtrueにする */
+		 m_isVisibleHand = false;
+
+		 addMouseListener(new MouseAdapter(){
+				  @Override
+				  public void mouseClicked(MouseEvent e)
+				  {
+					 Point pos_scrn = e.getPoint();
+					 Point pos = convertComponentPosToBoardPos(pos_scrn);
+
+					 if (m_player_to_notify.isAvailablePos(pos))
+					 {
+						System.out.printf("place here (%d,%d).\n", pos.x, pos.y);
+						m_player_to_notify.setPos(pos);
+					 }
+					 else
+					 {
+						System.out.printf("can not place here (%d,%d) !\n", pos.x, pos.y);
+					 }
+				  }
+			});
 
 		 Dimension size = new Dimension(400, 400);	/* 画面上の盤面のサイズ（ピクセル） */
 		 setSize(size);
 		 setPreferredSize(size);
+	  }
+
+	  /********************************************************************************
+	   * @brief	スクリーン座標からボード座標を算出する
+	   */
+	  private Point convertComponentPosToBoardPos(Point pt_scrn)
+	  {
+		 Dimension size = getSize();
+		 int d = size.width / WIDTH;
+		 int x = pt_scrn.x / d;
+		 int y = pt_scrn.y / d;
+		 Point pos = new Point(x, y);
+		 return pos;
 	  }
 
 	  /********************************************************************************
@@ -395,7 +429,7 @@ class ReversiBoard extends JPanel
 			}
 		 }
 
-		 /* 盤面上に指し手を描画する */
+		 /* 人間の指し手の時に盤面上にマウスカーソルがあるなら、指し手を描画する */
 		 if (m_isVisibleHand)
 		 {
 			Point pt_cursor = MouseInfo.getPointerInfo().getLocation();
@@ -405,11 +439,21 @@ class ReversiBoard extends JPanel
 
 			Rectangle rect = new Rectangle(size);
 			if (rect.contains(pt_cursor))
-			{
-			   int x_icon = ((pt_cursor.x / d) * d) + ((d - m_icon_hand.getIconWidth()) / 2) + 5;
-			   int y_icon = ((pt_cursor.y / d) * d) + ((d - m_icon_hand.getIconHeight()) / 2) + 12;
+			{ /* 盤面のマス目の真ん中あたりをハンドの人差し指が指すように座標を調整する */
+			   Point pos = convertComponentPosToBoardPos(pt_cursor);
+			   int x_icon = (pos.x * d) + ((d - m_icon_hand.getIconWidth()) / 2) + 5;
+			   int y_icon = (pos.y * d) + ((d - m_icon_hand.getIconHeight()) / 2) + 12;
 			   m_icon_hand.paintIcon(this, g, x_icon, y_icon);
 			}
 		 }
+	  }
+
+	  /********************************************************************************
+	   * @brief	駒を置こうとしたことを通知するスレッドをセットする
+	   * @note	AutoPlayerはこのメソッドを呼び出すことはない
+	   */
+	  public void setNotifier(Player player)
+	  {
+		 m_player_to_notify = player.isAutoPlay() ? null : (HumanPlayer)player;
 	  }
 }

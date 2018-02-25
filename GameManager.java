@@ -98,42 +98,38 @@ public class GameManager
 		 m_board.setPiece(4, 4, new ReversiPiece(ReversiPiece.Type.BLACK));
 		 m_board.repaint();
 		 
-		 try
-		 {
-			int count_fail = 0;	/* 駒が置けなかった場合が連続したかを確認するカウンタ */
+		 int count_fail = 0;	/* 駒が置けなかった場合が連続したかを確認するカウンタ */
+		 System.out.println("starting this game.");
 
-			System.out.println("starting this game.");
-			while(true)
+		 /* ゲーム中のループ */
+		 while(true)
+		 {
+			/* 人間の指し手の（自動プレイできない）場合はハンドを表示する */
+			boolean visible_hand = !m_current_player.isAutoPlay();
+			m_board.enableVisibleHand(visible_hand);
+
+			/* 現在のゲームステータスを通知する */
+			m_status_notifier.notify(m_board);
+
+			/* 現在のプレイヤーが駒を置くのを待って、プレイヤーを交代する */
+			System.out.println("- - - - - - - - - - - - - - - - - "); /* for debug: */
+			System.out.printf("%s's turn.\n", m_current_player); /* for debug: */
+			boolean success = waitPlaying(m_current_player);
+			if (success)
 			{
-			   Thread.sleep(500);  /* for debug: */
-
-			   /* 現在のゲームステータスを通知する */
-			   m_status_notifier.notify(m_board);
-
-			   /* 現在のプレイヤーが駒を置くのを待って、プレイヤーを交代する */
-			   System.out.println("- - - - - - - - - - - - - - - - - "); /* for debug: */
-			   System.out.printf("%s's turn.\n", m_current_player); /* for debug: */
-			   boolean success = waitPlaying(m_current_player);
-			   if (success)
-			   {
-				  count_fail = 0;
-			   }
-			   else
-			   { /* 駒を置けなかった！ */
-				  count_fail += 1;
-				  if (count_fail == 2)
-				  { /* 2回連続で駒を置けなかった → 2人とも駒を置けないのでゲーム終了 */
-					 break;
-				  }
-			   }
-
-			   /* 攻守交替 */
-			   m_current_player = changePlayer();
+			   count_fail = 0;
 			}
-		 }
-		 catch(Exception e)
-		 {
-			System.out.println(e);
+			else
+			{ /* 駒を置けなかった！ */
+			   count_fail += 1;
+			   if (count_fail == 2)
+			   { /* 2回連続で駒を置けなかった → 2人とも駒を置けないのでゲーム終了 */
+				  break;
+			   }
+			}
+
+			/* 攻守交替 */
+			m_current_player = changePlayer();
 		 }
 
 		 /* このゲームが終了した */
@@ -178,8 +174,10 @@ public class GameManager
 					 setDecidedPos(pos);
 				  }
 			});
+
 		 try
 		 {
+			m_board.setNotifier(player);
 			thread.start();
 			thread.join();
 		 } catch(Exception e) { System.out.println(e); }

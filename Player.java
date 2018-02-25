@@ -45,7 +45,9 @@ abstract class Player
 	  protected Type m_player_type;				/* プレイヤー { HUMAN | COMPUTER} */
 	  protected ReversiPiece.Type m_piece_type;	/* 自分の駒の色 { BLACK | WHITE } ※ 黒が先手 */
 
-	  /* @brief	constructor */
+	  /********************************************************************************
+	   * @brief		constructor
+	   */
 	  public Player(ReversiBoard board, String name, Player.Type player_type, ReversiPiece.Type piece_type)
 	  {
 		 m_board = board;
@@ -54,15 +56,12 @@ abstract class Player
 		 m_piece_type = piece_type;
 	  }
 
-	  /* @brief	駒を置く場所を考える
-	   * @return	駒を置く場所、置けない場合は null */
+	  /********************************************************************************
+	   * @brief		駒を置く場所を考える
+	   * @return	駒を置く場所、置けない場合は null
+	   */
 	  public Point think(HashMap<Point, Vector<Point>> candidate_pos_map)
 	  {
-		 try /* for debug: 20180221 時間のかかる処理（ユーザー入力など）をシミュレート */
-		 {
-			Thread.sleep(1000);
-		 } catch(Exception e) { System.out.println(e); }
-
 		 if (candidate_pos_map.size() != 0)
 		 {
 			return doThink(candidate_pos_map);
@@ -73,7 +72,7 @@ abstract class Player
 		 }
 	  }
 
-	  /* @brief	駒の種別を取得する */
+	  /* @brief		駒の種別を取得する */
 	  public ReversiPiece.Type getPieceType()
 	  {
 		 return m_piece_type;
@@ -86,9 +85,17 @@ abstract class Player
 		 return m_name;
 	  }
 
-	  /* @brief	駒を置く場所を考える
-	   * @return	駒を置く場所、置けない場合は null */
+	  /* @brief		駒を置く場所を考える
+	   * @return	駒を置く場所
+	   * @note		駒が置けない場合には、このメソッドが呼ばれることはない
+	   */
 	  abstract protected Point doThink(HashMap<Point, Vector<Point>> candidate_pos_map);
+
+	  /********************************************************************************
+	   * @brief		自動プレイかどうか問い合わせる
+	   * @return	true: 自動プレイできます
+	   */
+	  abstract public boolean isAutoPlay();
 }
 
 
@@ -98,25 +105,120 @@ abstract class Player
  */
 class HumanPlayer extends Player
 {
+	  private Point m_pos;
+	  private HashMap<Point, Vector<Point>> m_candidate_pos_map;
+	  private Thread m_thread_think;
+
 	  /* @brief	constructor */
 	  public HumanPlayer(ReversiBoard board, String name, ReversiPiece.Type piece_type)
 	  {
 		 super(board, name, Player.Type.HUMAN, piece_type);
 	  }
 
-	  /* @brief	駒を置く場所を考える */
+	  /********************************************************************************
+	   * @brief	駒を置く場所を考える
+	   * @note		駒が置けない場合には、このメソッドが呼ばれることはない
+	   */
 	  @Override
 	  protected Point doThink(HashMap<Point, Vector<Point>> candidate_pos_map)
 	  {
-		 Point pos = null;
-		 /* TODO: 20180218  人間が駒を置ける場所を教えるまで処理を返さない（？） */
-		 return pos;
+		 m_pos = null;
+		 m_candidate_pos_map = candidate_pos_map;
+
+		 m_thread_think = new Thread(new Runnable(){
+				  public void run()
+				  {
+					 while(true)
+					 {
+						try
+						{
+						   /* 駒が置かれたらループを抜ける */
+						   if (getPos() != null)
+						   {
+							  break;
+						   }
+
+						   Thread.sleep(100);  /* システムの負荷を上げないように・・・ */
+						   /* まだ駒が置かれてないうちに wait()を抜けてきた
+							*    → 盤面を再描画する（移動するハンドを描画するため） */
+						   m_board.repaint();
+						}
+						catch(Exception e)
+						{
+						   System.out.println(e);
+						}
+					 }
+				  }
+			});
+
+
+		 /* 人間が駒を置くまで待つ */
+		 try
+		 {
+			m_thread_think.start();
+			m_thread_think.join();
+		 }
+		 catch(Exception e)
+		 {
+			System.out.println(e);
+		 }
+
+		 return m_pos;
 	  }
 
-	  /* @brief	（人間が）駒を置く場所を教える */
-	  public void setPiece(int x, int y)
+	  /********************************************************************************
+	   * @brief		自動プレイかどうか問い合わせる
+	   * @return	true: 自動プレイできます
+	   */
+	  public boolean isAutoPlay()
 	  {
-		 /* TODO: 20180220  駒を置ける場所を取得する */
+		 return false;
+	  }
+
+	  /********************************************************************************
+	   * @brief		指定された場所に駒を置けるかを問い合わせる
+	   * @param [in]	x, y - 駒を置きたい場所
+	   * @return	true: 駒を置ける、false: 置けない
+	   */
+	  public boolean isAvailablePos(Point pos_place)
+	  {
+		 ReversiPiece piece = m_board.getPiece(pos_place.x, pos_place.y);
+		 /* 盤面上で駒が置かれてない場所なら、駒を置けるかどうかを確認する */
+		 if (piece == null)
+		 {
+			for (Point pos : m_candidate_pos_map.keySet())
+			{
+			   System.out.printf("can place (%d,%d) == (%d,%d) ?\n", pos_place.x, pos_place.y, pos.x, pos.y);
+
+			   if (pos.equals(pos_place))
+			   {
+				  /* ここには駒を置ける */
+				  return true;
+			   }
+			}
+		 }
+
+		 /* 駒を置けなかった */
+		 return false;
+	  }
+
+	  /********************************************************************************
+	   * @brief		指定された場所に駒を置く
+	   * @param [in]	x, y - 駒を置きたい場所
+	   */
+	  synchronized public void setPos(Point pos)
+	  {
+		 m_pos = pos;
+	  }
+
+
+	  /********************************************************************************
+	   * @brief		指定された場所に駒を置く
+	   * @param [in]	x, y - 駒を置きたい場所
+	   */
+	  synchronized private Point getPos()
+	  {
+		 return m_pos;
 	  }
 }
 
@@ -127,13 +229,18 @@ class HumanPlayer extends Player
  */
 class AutoPlayer extends Player
 {
-	  /* @brief	constructor */
+	  /********************************************************************************
+	  * @brief		constructor
+	  */
 	  public AutoPlayer(ReversiBoard board, String name, ReversiPiece.Type piece_type)
 	  {
 		 super(board, name, Player.Type.COMPUTER, piece_type);
 	  }
 
-	  /* @brief	駒を置く場所を考える */
+	  /********************************************************************************
+	   * @brief	駒を置く場所を考える
+	   * @note		駒が置けない場合には、このメソッドが呼ばれることはない
+	   */
 	  @Override
 	  protected Point doThink(HashMap<Point, Vector<Point>> candidate_pos_map)
 	  {
@@ -145,5 +252,14 @@ class AutoPlayer extends Player
 		 pos = (Point)(candidate_pos_map.keySet().toArray()[idx]);
 
 		 return pos;
+	  }
+
+	  /********************************************************************************
+	   * @brief		自動プレイかどうか問い合わせる
+	   * @return	true: 自動プレイできます
+	   */
+	  public boolean isAutoPlay()
+	  {
+		 return true;
 	  }
 }
