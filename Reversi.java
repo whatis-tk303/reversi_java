@@ -1,25 +1,21 @@
 /* @file	Reversi.java
  * @date	2018-02-18
  * @author	TK303
+ *
+ * @description
+ *
+ *	class Reversi : リバーシゲームのアプリケーション
+ *	＜責務＞
+ *	  - リバーシゲームの本体
+ *			prepare			準備：先手、後手を決める
+ *			showResult		結果表示： 勝敗を表示する
+ *			main			ゲームを進行する
  */
 
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-
-
-/*********************************************************************************
- * @brief	このアプリケーションのウィンドウ
- */
-class GameFrame extends JFrame
-{
-	  public GameFrame(String title)
-	  {  
-		 super(title);
-		 setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	  }
-}
 
 
 /*********************************************************************************
@@ -98,11 +94,12 @@ class Reversi
 	  /* アプリケーション・メイン*/
 	  public static void main(String[] args)
 	  {
-		 s_frame = new GameFrame("Reversi");
+		 s_frame = new JFrame("Reversi");
 		 s_board = new ReversiBoard();
 		 s_game = new GameManager();
 		 s_players = new Players();
 
+		 s_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		 s_frame.add(s_board);
 		 s_frame.pack();
 		 s_frame.setLocationByPlatform(true);

@@ -1,6 +1,30 @@
 /* @file	Reversi.java
  * @date	2018-02-18
  * @author	TK303
+ *
+ * @description
+ *
+ *	class ReversiBoard : リバーシの盤面
+ *	＜責務＞
+ *	  - 盤面を管理する
+ *			(constructor)	盤面を生成する
+ *			reset			盤面をリセットする
+ *			getPiece		指定された位置にある駒を参照する
+ *
+ *	  - 駒を配置し描画する
+ *			setPiece		盤面に駒を置く
+ *			paintComponent	盤面を描画する
+ *
+ *	  - 駒が置ける場所と、ひっくり返せる駒を調べる
+ *			getCandidatePos	指定された色の駒が置ける候補の位置のリストを取得する
+ *			getTurnPieces	ひっくり返せる駒を調べる
+ *
+ *	class ReversiPiece : リバーシの駒
+ *	＜責務＞
+ *	  - リバーシの駒の属性を保持し描画する
+ *			(constructor)	指定された種別の駒を生成する
+ *			getType			駒の種別を取得する
+ *			rendering		指定された位置に駒を描画する
  */
 
 import java.util.*;
@@ -37,7 +61,7 @@ class ReversiPiece
 	  }
 
 	  /********************************************************************************
-	   * @brief	駒を描画する
+	   * @brief	指定された位置に駒を描画する
 	   * @param [in]	g    - 描画対象のグラフィックス
 	   * @param [in]	pos  - 描画する位置（左上隅）
 	   * @param [in]	size - 描画する矩形のサイズ（幅、高さ）

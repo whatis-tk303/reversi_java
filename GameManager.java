@@ -1,8 +1,18 @@
 /* @file	GameManager.java
  * @date	2018-02-18
  * @author	TK303
+ *
+ * @description
+ *
+ *	class GameManager : ゲームの進行を管理する
+ *	＜責務＞
+ *	  - ゲームの進行を管理する
+ *			(constructor)	
+ *			getCurrentPlayer	現在のプレイヤーを取得する
+ *			start				ゲームを開始する
+ *			changePlayer		プレイヤーを交代する
+ *			waitPlaying			現在のプレイヤーが駒を置く（あるいは置けないことが確定する）まで待つ
  */
-
 
 import java.util.*;
 import java.awt.*;

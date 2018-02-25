@@ -1,6 +1,28 @@
 /* @file	Player.java
  * @date	2018-02-18
  * @author	TK303
+ *
+ * @description
+ *
+ *	class Player : ゲームのプレイヤーの抽象クラス
+ *	＜責務＞
+ *	  - プレイヤーができる操作を担う
+ *			(constructor)	プレイヤーの名前と先手・後手を指定してプレイヤーを生成する
+ *			think			駒を置く場所を考える
+ *			getPieceType	駒の種別を取得する
+ *
+ *	class HumanPlayer : 手動操作をするプレイヤー
+ *	＜責務＞
+ *	  - 手動操作プレイヤー（人間）ができる操作を担う
+ *			(constructor)	
+ *			doThink			駒を置く場所を考える（手動で場所を選択する操作を含む）
+ *			setPiece		？？？（外部から駒を置く場所を指示する）
+ *
+ *	class AutoPlayer : 自動操作をするプレイヤー
+ *	＜責務＞
+ *	  - 自動操作プレイヤー（コンピューター）ができる操作を担う
+ *			(constructor)	
+ *			doThink			駒を置く場所を考える（盤面状況から自動で判断する）
  */
 
 
