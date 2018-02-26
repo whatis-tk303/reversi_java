@@ -254,6 +254,7 @@ class AutoPlayer extends Player
 		 {
 			if (checkAvailablePos_00(pos_trgt)) { return pos_trgt; }
 			if (checkAvailablePos_01(pos_trgt)) { return pos_trgt; }
+			if (checkAvailablePos_02(pos_trgt)) { return pos_trgt; }
 		 }
 
 		 /* 良いところに置けない → ランダムで置けるところを選択して置く */
@@ -278,7 +279,7 @@ class AutoPlayer extends Player
 	   * @brief		対照軸の駒の位置を作る（4箇所）
 	   * @return	対照軸の駒の位置（計4箇所）
 	   */
-	  public Vector<Point> makeContrastPos(Point pos_org)
+	  private Vector<Point> makeContrastPos(Point pos_org)
 	  {
 		 Vector<Point> pos_ary = new Vector<Point>();
 		 int x = pos_org.x;
@@ -298,7 +299,7 @@ class AutoPlayer extends Player
 	   * @brief		駒を置くところを調べる：00：４隅
 	   * @return	true: 置ける
 	   */
-	  public boolean checkAvailablePos_00(Point pos_trgt)
+	  private boolean checkAvailablePos_00(Point pos_trgt)
 	  {
 		 Vector<Point> pos_ary = makeContrastPos(new Point(0, 0));
 		 for (Point pos : pos_ary)
@@ -317,7 +318,7 @@ class AutoPlayer extends Player
 	   * @brief		駒を置くところを調べる：01：４隅の２個隣
 	   * @return	true: 置ける
 	   */
-	  public boolean checkAvailablePos_01(Point pos_trgt)
+	  private boolean checkAvailablePos_01(Point pos_trgt)
 	  {
 		 Vector<Point> pos_ary = new Vector<Point>();
 		 pos_ary.addAll(makeContrastPos(new Point(2, 0)));
@@ -335,7 +336,24 @@ class AutoPlayer extends Player
 		 return false;  /* 駒を置けるところはなかった */
 	  }
 
+	  /********************************************************************************
+	   * @brief		駒を置くところを調べる：02：？？？
+	   * @return	true: 置ける
+	   */
+	  private boolean checkAvailablePos_02(Point pos_trgt)
+	  {
+		 Vector<Point> pos_ary = new Vector<Point>();
+		 pos_ary.addAll(makeContrastPos(new Point(3, 1)));
+		 pos_ary.addAll(makeContrastPos(new Point(1, 3)));
 
+		 for (Point pos : pos_ary)
+		 {
+			if (pos_trgt.equals(pos))
+			{
+			   return true;   /* 駒を置けた */
+			}
+		 }
 
-
+		 return false;  /* 駒を置けるところはなかった */
+	  }
 }
