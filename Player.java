@@ -247,6 +247,16 @@ class AutoPlayer extends Player
 		 Point pos = null;
 		 /* TODO: 20180218  コンピューターは駒を置ける場所を自力で探す
 		  * （今はとりあえずランダムで置けるところを選択して置く） */
+
+
+		 /* 置いたら有利になるところを調べて、可能なら置く */
+		 for (Point pos_trgt : candidate_pos_map.keySet())
+		 {
+			if (checkAvailablePos_00(pos_trgt)) { return pos_trgt; }
+			if (checkAvailablePos_01(pos_trgt)) { return pos_trgt; }
+		 }
+
+		 /* 良いところに置けない → ランダムで置けるところを選択して置く */
 		 int num = candidate_pos_map.size();
 		 int idx = (new Random()).nextInt(num);
 		 pos = (Point)(candidate_pos_map.keySet().toArray()[idx]);
@@ -262,4 +272,70 @@ class AutoPlayer extends Player
 	  {
 		 return true;
 	  }
+
+
+	  /********************************************************************************
+	   * @brief		対照軸の駒の位置を作る（4箇所）
+	   * @return	対照軸の駒の位置（計4箇所）
+	   */
+	  public Vector<Point> makeContrastPos(Point pos_org)
+	  {
+		 Vector<Point> pos_ary = new Vector<Point>();
+		 int x = pos_org.x;
+		 int y = pos_org.y;
+		 int inv_x = (m_board.WIDTH - 1) - x;
+		 int inv_y = (m_board.HEIGHT - 1) - y;
+
+		 pos_ary.add(new Point(x, y));
+		 pos_ary.add(new Point(inv_x, y));
+		 pos_ary.add(new Point(x, inv_y));
+		 pos_ary.add(new Point(inv_x, inv_y));
+
+		 return pos_ary;
+	  }
+	  
+	  /********************************************************************************
+	   * @brief		駒を置くところを調べる：00：４隅
+	   * @return	true: 置ける
+	   */
+	  public boolean checkAvailablePos_00(Point pos_trgt)
+	  {
+		 Vector<Point> pos_ary = makeContrastPos(new Point(0, 0));
+		 for (Point pos : pos_ary)
+		 {
+			if (pos_trgt.equals(pos))
+			{
+			   return true;   /* 駒を置けた */
+			}
+		 }
+
+		 return false;  /* 駒を置けるところはなかった */
+	  }
+
+
+	  /********************************************************************************
+	   * @brief		駒を置くところを調べる：01：４隅の２個隣
+	   * @return	true: 置ける
+	   */
+	  public boolean checkAvailablePos_01(Point pos_trgt)
+	  {
+		 Vector<Point> pos_ary = new Vector<Point>();
+		 pos_ary.addAll(makeContrastPos(new Point(2, 0)));
+		 pos_ary.addAll(makeContrastPos(new Point(0, 2)));
+		 pos_ary.addAll(makeContrastPos(new Point(2, 2)));
+
+		 for (Point pos : pos_ary)
+		 {
+			if (pos_trgt.equals(pos))
+			{
+			   return true;   /* 駒を置けた */
+			}
+		 }
+
+		 return false;  /* 駒を置けるところはなかった */
+	  }
+
+
+
+
 }
