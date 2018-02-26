@@ -253,7 +253,15 @@ class AutoPlayer extends Player
 		 for (Point pos_trgt : candidate_pos_map.keySet())
 		 {
 			if (checkAvailablePos_00(pos_trgt)) { return pos_trgt; }
+		 }
+
+		 for (Point pos_trgt : candidate_pos_map.keySet())
+		 {
 			if (checkAvailablePos_01(pos_trgt)) { return pos_trgt; }
+		 }
+
+		 for (Point pos_trgt : candidate_pos_map.keySet())
+		 {
 			if (checkAvailablePos_02(pos_trgt)) { return pos_trgt; }
 		 }
 
