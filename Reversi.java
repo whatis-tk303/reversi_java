@@ -21,13 +21,14 @@ import javax.swing.*;
 /*********************************************************************************
  * @brief	アプリケーション本体
  */
-class Reversi
+class Application implements Runnable
 {
 	  private static JFrame s_frame;
 	  private static StatusPanel s_status_panel;
 	  private static ReversiBoard s_board;
 	  private static GameManager s_game;
 	  private static Players s_players;
+
 
 	  /********************************************************************************
 	   * @brief		準備：先手、後手を決める
@@ -97,10 +98,11 @@ class Reversi
 		 }
 	  }
 
-	  /********************************************************************************
-	   * @brief		アプリケーション・メイン
+	  /*********************************************************************************
+	   * @brief		？？？
 	   */
-	  public static void main(String[] args)
+	  @Override  /* Runnable */
+	  public void run()
 	  {
 		 s_frame = new JFrame("Reversi");
 		 s_board = new ReversiBoard();
@@ -128,5 +130,22 @@ class Reversi
 			/* 結果表示： 勝敗を表示する */
 			showResult(s_board, s_players);
 		 }
+	  }
+}
+
+
+/*********************************************************************************
+ * @brief	メインクラス
+ */
+public class Reversi
+{
+
+	  /********************************************************************************
+	   * @brief		アプリケーション・メイン
+	   */
+	  public static void main(String[] args)
+	  {
+		 Thread thread = new Thread(new Application());
+		 thread.start();
 	  }
 }
