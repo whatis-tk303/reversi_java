@@ -9,9 +9,7 @@ JAVAC = javac
 
 
 
-all:
-	$(JAVAC) Reversi.java
-
+all: $(TARGET).class
 
 
 clean:
@@ -19,3 +17,10 @@ clean:
 
 exec: $(TARGET).class
 	java Reversi
+
+%.class : %.java
+	$(JAVAC) $<
+
+
+# dependency
+Reversi.class : Player.class

@@ -25,7 +25,6 @@
  *			doThink			駒を置く場所を考える（盤面状況から自動で判断する）
  */
 
-
 import java.util.*;
 import java.awt.*;
 
@@ -44,6 +43,7 @@ abstract class Player
 	  protected String m_name;					/* プレイヤーの名前 */
 	  protected Type m_player_type;				/* プレイヤー { HUMAN | COMPUTER} */
 	  protected ReversiPiece.Type m_piece_type;	/* 自分の駒の色 { BLACK | WHITE } ※ 黒が先手 */
+	  private   boolean m_canAutoPlay;			/* true:自動プレイヤー（コンピューター） */
 
 	  /********************************************************************************
 	   * @brief		constructor
@@ -54,7 +54,15 @@ abstract class Player
 		 m_name = name;
 		 m_player_type = player_type;
 		 m_piece_type = piece_type;
+		 m_canAutoPlay = (player_type == Type.COMPUTER);
 	  }
+
+	  /********************************************************************************
+	   * @brief		駒を置く場所を考える
+	   * @return	駒を置く場所
+	   * @note		駒が置けない場合には、このメソッドが呼ばれることはない
+	   */
+	  abstract protected Point doThink(HashMap<Point, Vector<Point>> candidate_pos_map);
 
 	  /********************************************************************************
 	   * @brief		駒を置く場所を考える
@@ -85,17 +93,14 @@ abstract class Player
 		 return m_name;
 	  }
 
-	  /* @brief		駒を置く場所を考える
-	   * @return	駒を置く場所
-	   * @note		駒が置けない場合には、このメソッドが呼ばれることはない
-	   */
-	  abstract protected Point doThink(HashMap<Point, Vector<Point>> candidate_pos_map);
-
 	  /********************************************************************************
 	   * @brief		自動プレイかどうか問い合わせる
 	   * @return	true: 自動プレイできます
 	   */
-	  abstract public boolean isAutoPlay();
+	  public boolean canAutoPlay()
+	  {
+		 return m_canAutoPlay;
+	  }
 }
 
 
@@ -125,54 +130,21 @@ class HumanPlayer extends Player
 		 m_pos = null;
 		 m_candidate_pos_map = candidate_pos_map;
 
-		 m_thread_think = new Thread(new Runnable(){
-				  public void run()
-				  {
-					 while(true)
-					 {
-						try
-						{
-						   /* 駒が置かれたらループを抜ける */
-						   if (getPos() != null)
-						   {
-							  break;
-						   }
-
-						   Thread.sleep(100);  /* システムの負荷を上げないように・・・ */
-						   /* まだ駒が置かれてないうちに wait()を抜けてきた
-							*    → 盤面を再描画する（移動するハンドを描画するため） */
-						   m_board.repaint();
-						}
-						catch(Exception e)
-						{
-						   System.out.println(e);
-						}
-					 }
-				  }
-			});
-
-
-		 /* 人間が駒を置くまで待つ */
-		 try
+		 /* 駒が置かれたかどうかをチェックするループ */
+		 while(true)
 		 {
-			m_thread_think.start();
-			m_thread_think.join();
-		 }
-		 catch(Exception e)
-		 {
-			System.out.println(e);
+			if (getPos() != null)
+			{
+			   break;
+			}
+			else
+			{ /* 何もしない時は少し寝る（CPU負荷を上げないため） */
+			   try { Thread.sleep(1); }
+			   catch(Exception e) { System.out.println(e); }
+			}
 		 }
 
 		 return m_pos;
-	  }
-
-	  /********************************************************************************
-	   * @brief		自動プレイかどうか問い合わせる
-	   * @return	true: 自動プレイできます
-	   */
-	  public boolean isAutoPlay()
-	  {
-		 return false;
 	  }
 
 	  /********************************************************************************
@@ -188,7 +160,8 @@ class HumanPlayer extends Player
 		 {
 			for (Point pos : m_candidate_pos_map.keySet())
 			{
-			   System.out.printf("can place (%d,%d) == (%d,%d) ?\n", pos_place.x, pos_place.y, pos.x, pos.y);
+			   System.out.printf("can place (%d,%d) == (%d,%d) ?\n",
+								 pos_place.x, pos_place.y, pos.x, pos.y);
 
 			   if (pos.equals(pos_place))
 			   {
@@ -238,18 +211,17 @@ class AutoPlayer extends Player
 	  }
 
 	  /********************************************************************************
-	   * @brief	駒を置く場所を考える
+	   * @brief		駒を置く場所を考える
+	   *			コンピューターは駒を置ける場所を自力で探す
 	   * @note		駒が置けない場合には、このメソッドが呼ばれることはない
 	   */
 	  @Override
 	  protected Point doThink(HashMap<Point, Vector<Point>> candidate_pos_map)
 	  {
 		 Point pos = null;
-		 /* TODO: 20180218  コンピューターは駒を置ける場所を自力で探す
-		  * （今はとりあえずランダムで置けるところを選択して置く） */
-
 
 		 /* 置いたら有利になるところを調べて、可能なら置く */
+		 /* TODO: 20180228  処理が冗長なのでもう少し効率的な書き方にする？ */
 		 for (Point pos_trgt : candidate_pos_map.keySet())
 		 {
 			if (checkAvailablePos_00(pos_trgt)) { return pos_trgt; }
@@ -272,16 +244,6 @@ class AutoPlayer extends Player
 
 		 return pos;
 	  }
-
-	  /********************************************************************************
-	   * @brief		自動プレイかどうか問い合わせる
-	   * @return	true: 自動プレイできます
-	   */
-	  public boolean isAutoPlay()
-	  {
-		 return true;
-	  }
-
 
 	  /********************************************************************************
 	   * @brief		対照軸の駒の位置を作る（4箇所）

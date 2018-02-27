@@ -34,33 +34,25 @@ class Players
 	  public Player second;
 
 	  /* constructor */
-	  public Players()
-	  {
-	  }
+	  public Players() {}
 
 	  /**/
-	  public void setFirst(Player p)
-	  {
-		 first = p;
-	  }
+	  public void setFirst(Player p) { first = p; }
 
 	  /**/
-	  public void setSecond(Player p)
-	  {
-		 second = p;
-	  }
+	  public void setSecond(Player p) { second = p; }
 }
 
 
 /*********************************************************************************
  * @brief	ゲーム進行管理
  */
-public class GameManager
+public class GameManager implements Runnable
 {
-	  private ReversiBoard m_board;
-	  private Players m_players;		/* プレイヤー２人 */
-	  private Player m_current_player;	/* 現在のプレイヤー */
-	  private StatusNotifier m_status_notifier;		/* ゲームステータスを通知する */
+	  private ReversiBoard m_board;				/** 盤面                       */
+	  private Players m_players;				/** プレイヤー２人             */
+	  private Player m_current_player;			/** 現在のプレイヤー           */
+	  private StatusNotifier m_status_notifier;	/** ゲームステータスを通知する */
 
 	  /********************************************************************************
 	   * @brief	constructor
@@ -89,7 +81,7 @@ public class GameManager
 		 m_board = board;
 		 m_players = players;
 		 m_current_player = m_players.first;
-		 
+
 		 /* 開始時の駒を置く */
 		 m_board.reset();
 		 m_board.setPiece(3, 3, new ReversiPiece(ReversiPiece.Type.BLACK));
@@ -98,14 +90,38 @@ public class GameManager
 		 m_board.setPiece(4, 4, new ReversiPiece(ReversiPiece.Type.BLACK));
 		 m_board.repaint();
 		 
+		 Thread thread = new Thread(this);
+		 try
+		 {
+			thread.start();
+			System.out.println("starting this game.");
+			thread.join();
+		 }
+		 catch(Exception e)
+		 {
+			System.out.println(e);
+		 }
+
+		 /* このゲームが終了した */
+		 /* TODO: 20180218  このゲームが終了したことを何か表示する？ */
+		 /* ゲーム終了時のゲームステータスを通知する */
+		 m_status_notifier.notify(m_board);
+		 System.out.println("ending this game.");
+	  }
+
+	  /********************************************************************************
+	   * @brief		ゲームのループ
+	   */
+	  @Override /* Runnable */
+	  public void run()
+	  {
 		 int count_fail = 0;	/* 駒が置けなかった場合が連続したかを確認するカウンタ */
-		 System.out.println("starting this game.");
 
 		 /* ゲーム中のループ */
 		 while(true)
 		 {
 			/* 人間の指し手の（自動プレイできない）場合はハンドを表示する */
-			boolean visible_hand = !m_current_player.isAutoPlay();
+			boolean visible_hand = !m_current_player.canAutoPlay();
 			m_board.enableVisibleHand(visible_hand);
 
 			/* 現在のゲームステータスを通知する */
@@ -131,12 +147,6 @@ public class GameManager
 			/* 攻守交替 */
 			m_current_player = changePlayer();
 		 }
-
-		 /* このゲームが終了した */
-		 /* TODO: 20180218  このゲームが終了したことを何か表示する？ */
-		 /* ゲーム終了時のゲームステータスを通知する */
-		 m_status_notifier.notify(m_board);
-		 System.out.println("ending this game.");
 	  }
 
 	  /********************************************************************************
@@ -149,65 +159,46 @@ public class GameManager
 			: m_players.first;
 	  }
 
-	  private Point m_pos_decided;
-	  private void setDecidedPos(Point pos) { m_pos_decided = pos; }
-	  private Point getDecidedPos() { return m_pos_decided; }
-
 	  /********************************************************************************
-	   * @brief	現在のプレイヤーが駒を置く（あるいは置けないことが確定する）まで待つ
+	   * @brief		現在のプレイヤーが駒を置く（あるいは置けないことが確定する）
+	   * @param [in]	player - 現在のプレイヤー
+	   * @return		true:駒を置けた、false:駒を置けなかった
 	   */
-	  private boolean waitPlaying(final Player player)
+	  private boolean waitPlaying(Player player)
 	  {
 		 /* ひっくり返せる位置と、ひっくり返せる相手駒の配列のマップをここで
 		  * 取得してから think()に渡す */
-		 final HashMap<Point, Vector<Point>> candidate_pos_map;
+		 HashMap<Point, Vector<Point>> candidate_pos_map;
 		 candidate_pos_map = m_board.getCandidatePos(player.getPieceType());
 
 		 System.out.println(candidate_pos_map); /* for debug: 20180220  ひっくり返せる候補 */
 
 		 /* 現在のプレイヤーが駒を置く位置を考える */
-		 System.out.println("begining to think " + player + " ...");  /* for debug: 20180221 */
-		 Thread thread = new Thread(new Runnable(){
-				  @Override
-				  public void run() {
-					 Point pos = player.think(candidate_pos_map);
-					 setDecidedPos(pos);
-				  }
-			});
-
-		 try
-		 {
-			m_board.setNotifier(player);
-			thread.start();
-			thread.join();
-		 } catch(Exception e) { System.out.println(e); }
+		 m_board.setNotifier(player);
+		 Point pos = player.think(candidate_pos_map);
 		 System.out.println("done.");  /* for debug: 20180221 */
 		 
-		 Point pos = getDecidedPos();
-		 if (pos != null)
-		 { /* 指定された位置に自分の駒を置く */
-			ReversiPiece piece = new ReversiPiece(player.getPieceType());
-			m_board.setPiece(pos.x, pos.y, piece);
-			m_board.repaint();
-
-			/* 相手の駒をひっくり返す */
-			Vector<Point> pos_turn_pieces = candidate_pos_map.get(pos);
-			/* TODO: 20180219  ここで駒をひっくり返す（アニメーションも実行する？） */
-			for (Point pos_turn : pos_turn_pieces)
-			{
-			   m_board.setPiece(pos_turn.x, pos_turn.y, new ReversiPiece(player.getPieceType()));
-			   m_board.repaint();
-			   try
-			   {
-				  Thread.sleep(200);
-			   } catch(Exception e) {}
-			}
-
-			return true;	/* 駒が置けた */
-		 }
-		 else
+		 if (pos == null)
 		 {
 			return false;	/* 駒が置けなかった！ */
 		 }
+
+		 /* 指定された位置に自分の駒を置く */
+		 ReversiPiece piece = new ReversiPiece(player.getPieceType());
+		 m_board.setPiece(pos.x, pos.y, piece);
+		 m_board.repaint();
+
+		 /* 相手の駒をひっくり返す */
+		 Vector<Point> pos_turn_pieces = candidate_pos_map.get(pos);
+		 /* TODO: 20180219  ここで駒をひっくり返す（アニメーションも実行する？） */
+		 for (Point pos_turn : pos_turn_pieces)
+		 {
+			m_board.setPiece(pos_turn.x, pos_turn.y, new ReversiPiece(player.getPieceType()));
+			m_board.repaint();
+			try { Thread.sleep(200); }
+			catch(Exception e) {}
+		 }
+
+		 return true;	/* 駒が置けた */
 	  }
 }

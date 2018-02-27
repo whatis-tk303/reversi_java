@@ -34,7 +34,6 @@ import java.awt.event.*;
 import javax.swing.*;
 
 
-
 /*********************************************************************************
  * @brief	リバーシの駒
  */
@@ -102,9 +101,11 @@ class ReversiPiece
  */
 class ReversiBoard extends JPanel
 {
-	  public static final int WIDTH = 8;	/* 盤面の横方向の区画数（８個分） */
-	  public static final int HEIGHT = 8;	/* 盤面の縦方向の区画数（８個分） */
+	  public static final int BOARD_SIZE = 8;		/* 盤面の区画数（８個分） */
+	  public static final int WIDTH  = BOARD_SIZE;	/* 盤面の横方向の区画数   */
+	  public static final int HEIGHT = BOARD_SIZE;	/* 盤面の縦方向の区画数   */
 
+	  /* 駒を調べる方向の配列（上下左右斜めの計８方向） */
 	  public static final Point[] AROUND_8DIR = {
 		 new Point(  0, -1 ),
 		 new Point(  1, -1 ),
@@ -119,7 +120,7 @@ class ReversiBoard extends JPanel
 	  private ReversiPiece[][] m_piece_matrix;	/* 盤面の駒を管理する配列 */
 	  private Icon m_icon_hand;					/* 指し手のイメージアイコン */
 	  private boolean m_isVisibleHand;			/* 盤面上にハンドアイコンを表示するフラグ */
-	  private Player m_player_to_notify;
+	  private HumanPlayer m_player_to_notify;	/* 盤面上での操作を伝えたいプレイヤー（＝人間） */
 
 	  /********************************************************************************
 	   * @brief	constructor
@@ -131,26 +132,19 @@ class ReversiBoard extends JPanel
 		 m_icon_hand = new ImageIcon("icon_hand.png");
 		 m_isVisibleHand = false;
 
-		 /* 盤面をクリックした時の動作：人間プレイヤーの場合のみ有効 */
+		 /* 盤面をクリックした時の動作を登録する */
 		 addMouseListener(new MouseAdapter(){
-				  @Override
-				  public void mouseClicked(MouseEvent e)
+				  @Override public void mouseClicked(MouseEvent e) 
 				  {
-					 if (m_player_to_notify != null)
-					 {
-						HumanPlayer hp = (HumanPlayer)m_player_to_notify;
-						Point pos_scrn = e.getPoint();
-						Point pos = convertComponentPosToBoardPos(pos_scrn);
-						if (hp.isAvailablePos(pos))
-						{
-						   System.out.printf("place here (%d,%d).\n", pos.x, pos.y);
-						   hp.setPos(pos);
-						}
-						else
-						{
-						   System.out.printf("can not place here (%d,%d) !\n", pos.x, pos.y);
-						}
-					 }
+					 doMouseClicked(e);
+				  }
+			});
+
+		 /* 盤面をマウスカーソルが動いた時の動作を登録する */
+		 addMouseMotionListener(new MouseMotionAdapter(){
+				  @Override public void mouseMoved(MouseEvent e) 
+				  {
+					 doMouseMoved(e);
 				  }
 			});
 
@@ -160,12 +154,51 @@ class ReversiBoard extends JPanel
 	  }
 
 	  /********************************************************************************
+	   * @brief		盤面をマウスカーソルが動いた時の動作
+	   * @note		人間プレイヤーの場合のみ有効 
+	   */
+	  private void doMouseMoved(MouseEvent e)
+	  {
+		 if (m_player_to_notify == null)
+		 {
+			return;
+		 }
+
+		 /* 人間プレイヤーならハンドを描画する */
+		 repaint();
+	  }
+
+	  /********************************************************************************
+	   * @brief		盤面をクリックした時の動作
+	   * @note		人間プレイヤーの場合のみ有効 
+	   */
+	  private void doMouseClicked(MouseEvent e)
+	  {
+		 if (m_player_to_notify == null)
+		 {
+			return;
+		 }
+
+		 Point pos_scrn = e.getPoint();
+		 Point pos = convertComponentPosToBoardPos(pos_scrn);
+		 if (m_player_to_notify.isAvailablePos(pos))
+		 {
+			System.out.printf("place here (%d,%d).\n", pos.x, pos.y);
+			m_player_to_notify.setPos(pos);
+		 }
+		 else
+		 {
+			System.out.printf("can not place here (%d,%d) !\n", pos.x, pos.y);
+		 }
+	  }
+
+	  /********************************************************************************
 	   * @brief	スクリーン座標からボード座標を算出する
 	   */
 	  private Point convertComponentPosToBoardPos(Point pt_scrn)
 	  {
 		 Dimension size = getSize();
-		 int d = size.width / WIDTH;
+		 int d = size.width / BOARD_SIZE;
 		 int x = pt_scrn.x / d;
 		 int y = pt_scrn.y / d;
 		 Point pos = new Point(x, y);
@@ -240,20 +273,15 @@ class ReversiBoard extends JPanel
 	   */
 	  public boolean setPiece(int x, int y, ReversiPiece piece)
 	  {
-		 if ((x < 0) && (WIDTH <= x))
+		 if ((0 <= x) && (x < WIDTH) && (0 <= y) && (y < HEIGHT))
+		 { /* 指定された色の駒を置く */
+			m_piece_matrix[x][y] = piece;
+			return true;
+		 }
+		 else
 		 {
 			return false;
 		 }
-
-		 if ((y < 0) && (HEIGHT <= y))
-		 {
-			return false;
-		 }
-
-		 /* 指定された色の駒を置く */
-		 m_piece_matrix[x][y] = piece;
-
-		 return true;
 	  }
 
 	  /********************************************************************************
@@ -268,8 +296,6 @@ class ReversiBoard extends JPanel
 		  *     - 調べる位置に駒が置かれていない
 		  *       - 調べる位置の上下左右斜めの８方向のいずれかに相手の駒がある
 		  *         - 相手の駒の方向に自分の駒がある（端まで順番に見て調べる）
-		  *   - ひっくり返せる相手駒の数をカウントして、カウント数の降順に配列をソートする
-		  *     （配列の一番最初の要素を打ち手とすれば、一番多く相手駒をひっくり返せる）
 		  */
 
 		 /* ひっくり返せる位置と、ひっくり返せる相手駒の配列のマップ */
@@ -458,7 +484,6 @@ class ReversiBoard extends JPanel
 	   */
 	  public void setNotifier(Player player)
 	  {
-		 //m_player_to_notify = player.isAutoPlay() ? null : (HumanPlayer)player;
-		 m_player_to_notify = player.isAutoPlay() ? null : player;
+		 m_player_to_notify = player.canAutoPlay() ? null : (HumanPlayer)player;
 	  }
 }

@@ -138,7 +138,7 @@ class Application extends JFrame implements Runnable
 			/* 結果表示： 勝敗を表示する */
 			if (!showResult(m_board, m_players))
 			{
-			   break;
+			   break;  /* ゲームを終了する */
 			}
 		 }
 	  }
