@@ -12,30 +12,36 @@
  *			main			ゲームを進行する
  */
 
-import java.util.*;
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 
 
 /*********************************************************************************
  * @brief	アプリケーション本体
  */
-class Application implements Runnable
+class Application extends JFrame implements Runnable
 {
-	  private static JFrame s_frame;
-	  private static StatusPanel s_status_panel;
-	  private static ReversiBoard s_board;
-	  private static GameManager s_game;
-	  private static Players s_players;
+	  private StatusPanel m_status_panel;
+	  private ReversiBoard m_board;
+	  private GameManager m_game;
+	  private Players m_players;
 
+
+	  /********************************************************************************
+	   * @brief		constructor
+	   */
+	  public Application(String title)
+	  {
+		 super(title);
+	  }
 
 	  /********************************************************************************
 	   * @brief		準備：先手、後手を決める
 	   * @param [out]	決定したプレイヤー（先手・後手）を設定して返す
 	   */
-	  private static void prepare(Players players)
+	  private void prepare(Players players)
 	  {
+		 /* 先手・後手を決めるダイアログ */
 		 Object[] options = {
 			"Human(A) vs Human(B)",
 			"Human vs Computer",
@@ -44,7 +50,7 @@ class Application implements Runnable
 		 };
 
 		 int ret = JOptionPane.showOptionDialog(
-			s_frame,
+			this,
 			"???",
 			"select play type:",
 			JOptionPane.DEFAULT_OPTION,
@@ -56,20 +62,20 @@ class Application implements Runnable
 		 switch(ret)
 		 {
 			case 0: /* "Human(A) vs Human(B)" */
-			   players.first  = new HumanPlayer(s_board, "Human(B)",    ReversiPiece.Type.BLACK);
-			   players.second = new HumanPlayer(s_board, "Human(W)",    ReversiPiece.Type.WHITE);
+			   players.first  = new HumanPlayer(m_board, "Human(B)",    ReversiPiece.Type.BLACK);
+			   players.second = new HumanPlayer(m_board, "Human(W)",    ReversiPiece.Type.WHITE);
 			   break;
 			case 1: /* "Human vs Computer" */
-			   players.first  = new HumanPlayer(s_board, "Human(B)",    ReversiPiece.Type.BLACK);
-			   players.second = new AutoPlayer(s_board,  "Computer(W)", ReversiPiece.Type.WHITE);
+			   players.first  = new HumanPlayer(m_board, "Human(B)",    ReversiPiece.Type.BLACK);
+			   players.second = new AutoPlayer(m_board,  "Computer(W)", ReversiPiece.Type.WHITE);
 			   break;
 			case 2: /* "Computer vs Human" */
-			   players.first  = new AutoPlayer(s_board,  "Computer(B)", ReversiPiece.Type.BLACK);
-			   players.second = new HumanPlayer(s_board, "Human(W)",    ReversiPiece.Type.WHITE);
+			   players.first  = new AutoPlayer(m_board,  "Computer(B)", ReversiPiece.Type.BLACK);
+			   players.second = new HumanPlayer(m_board, "Human(W)",    ReversiPiece.Type.WHITE);
 			   break;
 			case 3: /* "Computer(A) vs Computer(B)" */
-			   players.first  = new AutoPlayer(s_board,  "Computer(B)", ReversiPiece.Type.BLACK);
-			   players.second = new AutoPlayer(s_board,  "Computer(W)", ReversiPiece.Type.WHITE);
+			   players.first  = new AutoPlayer(m_board,  "Computer(B)", ReversiPiece.Type.BLACK);
+			   players.second = new AutoPlayer(m_board,  "Computer(W)", ReversiPiece.Type.WHITE);
 			   break;
 		 }
 
@@ -78,12 +84,15 @@ class Application implements Runnable
 
 	  /********************************************************************************
 	   * @brief		結果表示： 勝敗を表示する
+	   * @return	true:再度ゲームを開始する、false:ゲームを終了する
 	   */
-	  private static void showResult(ReversiBoard board, Players players)
+	  private boolean showResult(ReversiBoard board, Players players)
 	  {
+		 /* 再度ゲームを開始する、アプリを終了するのを選択するダイアログ */
 		 Object[] options = {"play next game", "exit game"};
+
 		 int ret = JOptionPane.showOptionDialog(
-			s_frame,
+			this,
 			"are you continue game ?",
 			"play result:",
 			JOptionPane.DEFAULT_OPTION,
@@ -92,43 +101,45 @@ class Application implements Runnable
 			options,
 			options[0]);
 
-		 if (ret == 1)
-		 { /* "exit game" が選択された → このアプリケーションを終了する */
-			System.exit(0);
-		 }
+		 return (ret == 0);  /* 0:再度ゲームを開始する */
 	  }
 
 	  /*********************************************************************************
-	   * @brief		？？？
+	   * @brief		ゲームを初期化する
+	   */
+	  public void init()
+	  {
+		 m_board = new ReversiBoard();
+		 m_status_panel = new StatusPanel();
+		 m_game = new GameManager(m_status_panel);
+		 m_players = new Players();
+
+		 add(m_status_panel, BorderLayout.NORTH);
+		 add(m_board, BorderLayout.CENTER);
+		 pack();
+	  }
+
+	  /*********************************************************************************
+	   * @brief		ゲームループ
 	   */
 	  @Override  /* Runnable */
 	  public void run()
 	  {
-		 s_frame = new JFrame("Reversi");
-		 s_board = new ReversiBoard();
-		 s_status_panel = new StatusPanel();
-		 s_game = new GameManager(s_status_panel);
-		 s_players = new Players();
-
-		 s_frame.setLocationByPlatform(true);
-		 s_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		 s_frame.add(s_status_panel, BorderLayout.NORTH);
-		 s_frame.add(s_board, BorderLayout.CENTER);
-		 s_frame.pack();
-		 s_frame.setVisible(true);
-
 		 while(true)
 		 {
 			/* 準備：先手、後手を決める */
-			prepare(s_players);
-			System.out.println(s_players.first);
-			System.out.println(s_players.second);
+			prepare(m_players);
+			System.out.println(m_players.first);
+			System.out.println(m_players.second);
 
 			/* ゲーム開始 */
-			s_game.start(s_board, s_players);
+			m_game.start(m_board, m_players);
 
 			/* 結果表示： 勝敗を表示する */
-			showResult(s_board, s_players);
+			if (!showResult(m_board, m_players))
+			{
+			   break;
+			}
 		 }
 	  }
 }
@@ -139,13 +150,28 @@ class Application implements Runnable
  */
 public class Reversi
 {
-
 	  /********************************************************************************
 	   * @brief		アプリケーション・メイン
 	   */
 	  public static void main(String[] args)
 	  {
-		 Thread thread = new Thread(new Application());
-		 thread.start();
+		 Application app = new Application("Reversi");
+		 app.setLocationByPlatform(true);
+		 app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		 app.init();
+		 app.setVisible(true);
+
+		 Thread thread = new Thread(app);
+		 try
+		 {
+			thread.start();
+			thread.join();
+		 }
+		 catch(Exception e)
+		 {
+			System.out.println(e);
+		 }
+
+		 System.exit(0);
 	  }
 }
