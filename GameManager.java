@@ -47,7 +47,7 @@ class Players
 /*********************************************************************************
  * @brief	ゲーム進行管理
  */
-public class GameManager implements Runnable
+public class GameManager
 {
 	  private ReversiBoard m_board;				/** 盤面                       */
 	  private Players m_players;				/** プレイヤー２人             */
@@ -90,17 +90,8 @@ public class GameManager implements Runnable
 		 m_board.setPiece(4, 4, new ReversiPiece(ReversiPiece.Type.BLACK));
 		 m_board.repaint();
 		 
-		 Thread thread = new Thread(this);
-		 try
-		 {
-			thread.start();
-			System.out.println("starting this game.");
-			thread.join();
-		 }
-		 catch(Exception e)
-		 {
-			System.out.println(e);
-		 }
+		 /* ゲームのループ */
+		 doLoop();
 
 		 /* このゲームが終了した */
 		 /* TODO: 20180218  このゲームが終了したことを何か表示する？ */
@@ -112,8 +103,7 @@ public class GameManager implements Runnable
 	  /********************************************************************************
 	   * @brief		ゲームのループ
 	   */
-	  @Override /* Runnable */
-	  public void run()
+	  public void doLoop()
 	  {
 		 int count_fail = 0;	/* 駒が置けなかった場合が連続したかを確認するカウンタ */
 

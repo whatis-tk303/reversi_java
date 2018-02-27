@@ -112,7 +112,6 @@ class HumanPlayer extends Player
 {
 	  private Point m_pos;
 	  private HashMap<Point, Vector<Point>> m_candidate_pos_map;
-	  private Thread m_thread_think;
 
 	  /* @brief	constructor */
 	  public HumanPlayer(ReversiBoard board, String name, ReversiPiece.Type piece_type)
