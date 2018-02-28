@@ -41,8 +41,18 @@ class ReversiPiece
 {
 	  /* @brief	駒の種別 { 黒 | 白 } */
 	  public enum Type {
-		 BLACK,
-		 WHITE,
+		 BLACK("piece_black.png"),
+		 WHITE("piece_white.png"),
+		 ;
+
+		 private String image_file;
+		 private Icon icon;
+
+		 private Type(String fname)
+		 {
+			this.image_file = fname;
+			this.icon = new ImageIcon(fname);
+		 }
 	  };
 
 	  private Type m_type;
@@ -69,29 +79,7 @@ class ReversiPiece
 	   */
 	  public void rendering(Graphics g, Point pos, Dimension size)
 	  {
-		 Color color;
-
-		 if (m_type == Type.BLACK)
-		 {
-			color = Color.BLACK;
-		 }
-		 else if (m_type == Type.WHITE)
-		 {
-			color = Color.WHITE;
-		 }
-		 else
-		 {
-			return;
-		 }
-
-		 int w = (int)(size.width * 0.8);
-		 int h = (int)(size.height * 0.8);
-		 int dx = (size.width - w) / 2;
-		 int dy = (size.height - h) / 2;
-		 int x = pos.x + dx;
-		 int y = pos.y + dy;
-		 g.setColor(color);
-		 g.fillOval(x, y, w, h); 
+		 m_type.icon.paintIcon(null, g, pos.x, pos.y);
 	  }
 }
 
