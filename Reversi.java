@@ -4,12 +4,12 @@
  *
  * @description
  *
- *	class Reversi : $B%j%P!<%7%2!<%`$N%"%W%j%1!<%7%g%s(B
- *	$B!c@UL3!d(B
- *	  - $B%j%P!<%7%2!<%`$NK\BN(B
- *			prepare			$B=`Hw!'@h<j!"8e<j$r7h$a$k(B
- *			showResult		$B7k2LI=<(!'(B $B>!GT$rI=<($9$k(B
- *			main			$B%2!<%`$r?J9T$9$k(B
+ *	class Reversi : ƒŠƒo[ƒVƒQ[ƒ€‚ÌƒAƒvƒŠƒP[ƒVƒ‡ƒ“
+ *	ƒÓ–±„
+ *	  - ƒŠƒo[ƒVƒQ[ƒ€‚Ì–{‘Ì
+ *			prepare			€”õFæŽèAŒãŽè‚ðŒˆ‚ß‚é
+ *			showResult		Œ‹‰Ê•\Ž¦F Ÿ”s‚ð•\Ž¦‚·‚é
+ *			main			ƒQ[ƒ€‚ðis‚·‚é
  */
 
 import java.awt.*;
@@ -17,7 +17,7 @@ import javax.swing.*;
 
 
 /*********************************************************************************
- * @brief	$B%"%W%j%1!<%7%g%sK\BN(B
+ * @brief	ƒAƒvƒŠƒP[ƒVƒ‡ƒ“–{‘Ì
  */
 class Application extends JFrame implements Runnable
 {
@@ -36,12 +36,12 @@ class Application extends JFrame implements Runnable
 	  }
 
 	  /********************************************************************************
-	   * @brief		$B=`Hw!'@h<j!"8e<j$r7h$a$k(B
-	   * @param [out]	$B7hDj$7$?%W%l%$%d!<!J@h<j!&8e<j!K$r@_Dj$7$FJV$9(B
+	   * @brief		€”õFæŽèAŒãŽè‚ðŒˆ‚ß‚é
+	   * @param [out]	Œˆ’è‚µ‚½ƒvƒŒƒCƒ„[iæŽèEŒãŽèj‚ðÝ’è‚µ‚Ä•Ô‚·
 	   */
 	  private void prepare(Players players)
 	  {
-		 /* $B@h<j!&8e<j$r7h$a$k%@%$%"%m%0(B */
+		 /* æŽèEŒãŽè‚ðŒˆ‚ß‚éƒ_ƒCƒAƒƒO */
 		 Object[] options = {
 			"Human(A) vs Human(B)",
 			"Human vs Computer",
@@ -83,12 +83,12 @@ class Application extends JFrame implements Runnable
 	  }
 
 	  /********************************************************************************
-	   * @brief		$B7k2LI=<(!'(B $B>!GT$rI=<($9$k(B
-	   * @return	true:$B:FEY%2!<%`$r3+;O$9$k!"(Bfalse:$B%2!<%`$r=*N;$9$k(B
+	   * @brief		Œ‹‰Ê•\Ž¦F Ÿ”s‚ð•\Ž¦‚·‚é
+	   * @return	true:Ä“xƒQ[ƒ€‚ðŠJŽn‚·‚éAfalse:ƒQ[ƒ€‚ðI—¹‚·‚é
 	   */
 	  private boolean showResult(ReversiBoard board, Players players)
 	  {
-		 /* $B:FEY%2!<%`$r3+;O$9$k!"%"%W%j$r=*N;$9$k$N$rA*Br$9$k%@%$%"%m%0(B */
+		 /* Ä“xƒQ[ƒ€‚ðŠJŽn‚·‚éAƒAƒvƒŠ‚ðI—¹‚·‚é‚Ì‚ð‘I‘ð‚·‚éƒ_ƒCƒAƒƒO */
 		 Object[] options = {"play next game", "exit game"};
 
 		 int ret = JOptionPane.showOptionDialog(
@@ -101,11 +101,11 @@ class Application extends JFrame implements Runnable
 			options,
 			options[0]);
 
-		 return (ret == 0);  /* 0:$B:FEY%2!<%`$r3+;O$9$k(B */
+		 return (ret == 0);  /* 0:Ä“xƒQ[ƒ€‚ðŠJŽn‚·‚é */
 	  }
 
 	  /*********************************************************************************
-	   * @brief		$B%2!<%`$r=i4|2=$9$k(B
+	   * @brief		ƒQ[ƒ€‚ð‰Šú‰»‚·‚é
 	   */
 	  public void init()
 	  {
@@ -120,25 +120,25 @@ class Application extends JFrame implements Runnable
 	  }
 
 	  /*********************************************************************************
-	   * @brief		$B%2!<%`%k!<%W(B
+	   * @brief		ƒQ[ƒ€ƒ‹[ƒv
 	   */
 	  @Override  /* Runnable */
 	  public void run()
 	  {
 		 while(true)
 		 {
-			/* $B=`Hw!'@h<j!"8e<j$r7h$a$k(B */
+			/* €”õFæŽèAŒãŽè‚ðŒˆ‚ß‚é */
 			prepare(m_players);
 			System.out.println(m_players.first);
 			System.out.println(m_players.second);
 
-			/* $B%2!<%`3+;O(B */
+			/* ƒQ[ƒ€ŠJŽn */
 			m_game.start(m_board, m_players);
 
-			/* $B7k2LI=<(!'(B $B>!GT$rI=<($9$k(B */
+			/* Œ‹‰Ê•\Ž¦F Ÿ”s‚ð•\Ž¦‚·‚é */
 			if (!showResult(m_board, m_players))
 			{
-			   break;  /* $B%2!<%`$r=*N;$9$k(B */
+			   break;  /* ƒQ[ƒ€‚ðI—¹‚·‚é */
 			}
 		 }
 	  }
@@ -146,12 +146,12 @@ class Application extends JFrame implements Runnable
 
 
 /*********************************************************************************
- * @brief	$B%a%$%s%/%i%9(B
+ * @brief	ƒƒCƒ“ƒNƒ‰ƒX
  */
 public class Reversi
 {
 	  /********************************************************************************
-	   * @brief		$B%"%W%j%1!<%7%g%s!&%a%$%s(B
+	   * @brief		ƒAƒvƒŠƒP[ƒVƒ‡ƒ“EƒƒCƒ“
 	   */
 	  public static void main(String[] args)
 	  {

@@ -4,28 +4,28 @@
  *
  * @description
  *
- *	class ReversiBoard : $B%j%P!<%7$NHWLL(B
- *	$B!c@UL3!d(B
- *	  - $BHWLL$r4IM}$9$k(B
- *			(constructor)	$BHWLL$r@8@.$9$k(B
- *			reset			$BHWLL$r%j%;%C%H$9$k(B
- *			getPiece		$B;XDj$5$l$?0LCV$K$"$k6p$r;2>H$9$k(B
- *			countPieces		$B;XDj$5$l$?<oJL$N6p$N?t$r?t$($k(B
+ *	class ReversiBoard : ƒŠƒo[ƒV‚Ì”Õ–Ê
+ *	ƒÓ–±„
+ *	  - ”Õ–Ê‚ğŠÇ—‚·‚é
+ *			(constructor)	”Õ–Ê‚ğ¶¬‚·‚é
+ *			reset			”Õ–Ê‚ğƒŠƒZƒbƒg‚·‚é
+ *			getPiece		w’è‚³‚ê‚½ˆÊ’u‚É‚ ‚é‹î‚ğQÆ‚·‚é
+ *			countPieces		w’è‚³‚ê‚½í•Ê‚Ì‹î‚Ì”‚ğ”‚¦‚é
  *
- *	  - $B6p$rG[CV$7IA2h$9$k(B
- *			setPiece		$BHWLL$K6p$rCV$/(B
- *			paintComponent	$BHWLL$rIA2h$9$k(B
+ *	  - ‹î‚ğ”z’u‚µ•`‰æ‚·‚é
+ *			setPiece		”Õ–Ê‚É‹î‚ğ’u‚­
+ *			paintComponent	”Õ–Ê‚ğ•`‰æ‚·‚é
  *
- *	  - $B6p$,CV$1$k>l=j$H!"$R$C$/$jJV$;$k6p$rD4$Y$k(B
- *			getCandidatePos	$B;XDj$5$l$??'$N6p$,CV$1$k8uJd$N0LCV$N%j%9%H$r<hF@$9$k(B
- *			getTurnPieces	$B$R$C$/$jJV$;$k6p$rD4$Y$k(B
+ *	  - ‹î‚ª’u‚¯‚éêŠ‚ÆA‚Ğ‚Á‚­‚è•Ô‚¹‚é‹î‚ğ’²‚×‚é
+ *			getCandidatePos	w’è‚³‚ê‚½F‚Ì‹î‚ª’u‚¯‚éŒó•â‚ÌˆÊ’u‚ÌƒŠƒXƒg‚ğæ“¾‚·‚é
+ *			getTurnPieces	‚Ğ‚Á‚­‚è•Ô‚¹‚é‹î‚ğ’²‚×‚é
  *
- *	class ReversiPiece : $B%j%P!<%7$N6p(B
- *	$B!c@UL3!d(B
- *	  - $B%j%P!<%7$N6p$NB0@-$rJ];}$7IA2h$9$k(B
- *			(constructor)	$B;XDj$5$l$?<oJL$N6p$r@8@.$9$k(B
- *			getType			$B6p$N<oJL$r<hF@$9$k(B
- *			rendering		$B;XDj$5$l$?0LCV$K6p$rIA2h$9$k(B
+ *	class ReversiPiece : ƒŠƒo[ƒV‚Ì‹î
+ *	ƒÓ–±„
+ *	  - ƒŠƒo[ƒV‚Ì‹î‚Ì‘®«‚ğ•Û‚µ•`‰æ‚·‚é
+ *			(constructor)	w’è‚³‚ê‚½í•Ê‚Ì‹î‚ğ¶¬‚·‚é
+ *			getType			‹î‚Ìí•Ê‚ğæ“¾‚·‚é
+ *			rendering		w’è‚³‚ê‚½ˆÊ’u‚É‹î‚ğ•`‰æ‚·‚é
  */
 
 import java.util.*;
@@ -35,11 +35,11 @@ import javax.swing.*;
 
 
 /*********************************************************************************
- * @brief	$B%j%P!<%7$N6p(B
+ * @brief	ƒŠƒo[ƒV‚Ì‹î
  */
 class ReversiPiece
 {
-	  /* @brief	$B6p$N<oJL(B { $B9u(B | $BGr(B } */
+	  /* @brief	‹î‚Ìí•Ê { • | ”’ } */
 	  public enum Type {
 		 BLACK("piece_black.png"),
 		 WHITE("piece_white.png"),
@@ -65,35 +65,36 @@ class ReversiPiece
 		 m_type = type;
 	  }
 
-	  /* @brief	$B6p$N<oJL$r<hF@$9$k(B */
+	  /* @brief	‹î‚Ìí•Ê‚ğæ“¾‚·‚é */
 	  public Type getType()
 	  {
 		 return m_type;
 	  }
 
 	  /********************************************************************************
-	   * @brief	$B;XDj$5$l$?0LCV$K6p$rIA2h$9$k(B
-	   * @param [in]	g    - $BIA2hBP>]$N%0%i%U%#%C%/%9(B
-	   * @param [in]	pos  - $BIA2h$9$k0LCV!J:8>e6y!K(B
-	   * @param [in]	size - $BIA2h$9$k6k7A$N%5%$%:!JI}!"9b$5!K(B
+	   * @brief	w’è‚³‚ê‚½ˆÊ’u‚É‹î‚ğ•`‰æ‚·‚é
+	   * @param [in]	g    - •`‰æ‘ÎÛ‚ÌƒOƒ‰ƒtƒBƒbƒNƒX
+	   * @param [in]	pos  - •`‰æ‚·‚éˆÊ’ui¶ã‹÷j
+	   * @param [in]	size - •`‰æ‚·‚é‹éŒ`‚ÌƒTƒCƒYi•A‚‚³j
 	   */
 	  public void rendering(Graphics g, Point pos, Dimension size)
 	  {
+		 /* TODO: 20180301  size‚É‡‚í‚¹‚ÄƒCƒ[ƒW‚ğŠg‘åEk¬‚·‚é */
 		 m_type.icon.paintIcon(null, g, pos.x, pos.y);
 	  }
 }
 
 
 /*********************************************************************************
- * @brief	$B%j%P!<%7$NHWLL(B
+ * @brief	ƒŠƒo[ƒV‚Ì”Õ–Ê
  */
 class ReversiBoard extends JPanel
 {
-	  public static final int BOARD_SIZE = 8;		/* $BHWLL$N6h2h?t!J#88DJ,!K(B */
-	  public static final int WIDTH  = BOARD_SIZE;	/* $BHWLL$N2#J}8~$N6h2h?t(B   */
-	  public static final int HEIGHT = BOARD_SIZE;	/* $BHWLL$N=DJ}8~$N6h2h?t(B   */
+	  public static final int BOARD_SIZE = 8;		/* ”Õ–Ê‚Ì‹æ‰æ”i‚WŒÂ•ªj */
+	  public static final int WIDTH  = BOARD_SIZE;	/* ”Õ–Ê‚Ì‰¡•ûŒü‚Ì‹æ‰æ”   */
+	  public static final int HEIGHT = BOARD_SIZE;	/* ”Õ–Ê‚Ìc•ûŒü‚Ì‹æ‰æ”   */
 
-	  /* $B6p$rD4$Y$kJ}8~$NG[Ns!J>e2<:81&<P$a$N7W#8J}8~!K(B */
+	  /* ‹î‚ğ’²‚×‚é•ûŒü‚Ì”z—ñiã‰º¶‰EÎ‚ß‚ÌŒv‚W•ûŒüj */
 	  public static final Point[] AROUND_8DIR = {
 		 new Point(  0, -1 ),
 		 new Point(  1, -1 ),
@@ -105,10 +106,10 @@ class ReversiBoard extends JPanel
 		 new Point( -1, -1 ),
 	  };
 
-	  private ReversiPiece[][] m_piece_matrix;	/* $BHWLL$N6p$r4IM}$9$kG[Ns(B */
-	  private Icon m_icon_hand;					/* $B;X$7<j$N%$%a!<%8%"%$%3%s(B */
-	  private boolean m_isVisibleHand;			/* $BHWLL>e$K%O%s%I%"%$%3%s$rI=<($9$k%U%i%0(B */
-	  private HumanPlayer m_player_to_notify;	/* $BHWLL>e$G$NA`:n$rEA$($?$$%W%l%$%d!<!J!a?M4V!K(B */
+	  private ReversiPiece[][] m_piece_matrix;	/* ”Õ–Ê‚Ì‹î‚ğŠÇ—‚·‚é”z—ñ */
+	  private Icon m_icon_hand;					/* w‚µè‚ÌƒCƒ[ƒWƒAƒCƒRƒ“ */
+	  private boolean m_isVisibleHand;			/* ”Õ–Êã‚Éƒnƒ“ƒhƒAƒCƒRƒ“‚ğ•\¦‚·‚éƒtƒ‰ƒO */
+	  private HumanPlayer m_player_to_notify;	/* ”Õ–Êã‚Å‚Ì‘€ì‚ğ“`‚¦‚½‚¢ƒvƒŒƒCƒ„[ilŠÔj */
 
 	  /********************************************************************************
 	   * @brief	constructor
@@ -120,7 +121,7 @@ class ReversiBoard extends JPanel
 		 m_icon_hand = new ImageIcon("icon_hand.png");
 		 m_isVisibleHand = false;
 
-		 /* $BHWLL$r%/%j%C%/$7$?;~$NF0:n$rEPO?$9$k(B */
+		 /* ”Õ–Ê‚ğƒNƒŠƒbƒN‚µ‚½‚Ì“®ì‚ğ“o˜^‚·‚é */
 		 addMouseListener(new MouseAdapter(){
 				  @Override public void mouseClicked(MouseEvent e) 
 				  {
@@ -128,7 +129,7 @@ class ReversiBoard extends JPanel
 				  }
 			});
 
-		 /* $BHWLL$r%^%&%9%+!<%=%k$,F0$$$?;~$NF0:n$rEPO?$9$k(B */
+		 /* ”Õ–Ê‚ğƒ}ƒEƒXƒJ[ƒ\ƒ‹‚ª“®‚¢‚½‚Ì“®ì‚ğ“o˜^‚·‚é */
 		 addMouseMotionListener(new MouseMotionAdapter(){
 				  @Override public void mouseMoved(MouseEvent e) 
 				  {
@@ -136,14 +137,14 @@ class ReversiBoard extends JPanel
 				  }
 			});
 
-		 Dimension size = new Dimension(400, 400);	/* $B2hLL>e$NHWLL$N%5%$%:!J%T%/%;%k!K(B */
+		 Dimension size = new Dimension(400, 400);	/* ‰æ–Êã‚Ì”Õ–Ê‚ÌƒTƒCƒYiƒsƒNƒZƒ‹j */
 		 setSize(size);
 		 setPreferredSize(size);
 	  }
 
 	  /********************************************************************************
-	   * @brief		$BHWLL$r%^%&%9%+!<%=%k$,F0$$$?;~$NF0:n(B
-	   * @note		$B?M4V%W%l%$%d!<$N>l9g$N$_M-8z(B 
+	   * @brief		”Õ–Ê‚ğƒ}ƒEƒXƒJ[ƒ\ƒ‹‚ª“®‚¢‚½‚Ì“®ì
+	   * @note		lŠÔƒvƒŒƒCƒ„[‚Ìê‡‚Ì‚İ—LŒø 
 	   */
 	  private void doMouseMoved(MouseEvent e)
 	  {
@@ -152,13 +153,13 @@ class ReversiBoard extends JPanel
 			return;
 		 }
 
-		 /* $B?M4V%W%l%$%d!<$J$i%O%s%I$rIA2h$9$k(B */
+		 /* lŠÔƒvƒŒƒCƒ„[‚È‚çƒnƒ“ƒh‚ğ•`‰æ‚·‚é */
 		 repaint();
 	  }
 
 	  /********************************************************************************
-	   * @brief		$BHWLL$r%/%j%C%/$7$?;~$NF0:n(B
-	   * @note		$B?M4V%W%l%$%d!<$N>l9g$N$_M-8z(B 
+	   * @brief		”Õ–Ê‚ğƒNƒŠƒbƒN‚µ‚½‚Ì“®ì
+	   * @note		lŠÔƒvƒŒƒCƒ„[‚Ìê‡‚Ì‚İ—LŒø 
 	   */
 	  private void doMouseClicked(MouseEvent e)
 	  {
@@ -181,7 +182,7 @@ class ReversiBoard extends JPanel
 	  }
 
 	  /********************************************************************************
-	   * @brief	$B%9%/%j!<%s:BI8$+$i%\!<%I:BI8$r;;=P$9$k(B
+	   * @brief	ƒXƒNƒŠ[ƒ“À•W‚©‚çƒ{[ƒhÀ•W‚ğZo‚·‚é
 	   */
 	  private Point convertComponentPosToBoardPos(Point pt_scrn)
 	  {
@@ -194,7 +195,7 @@ class ReversiBoard extends JPanel
 	  }
 
 	  /********************************************************************************
-	   * @brief	$B%O%s%I%"%$%3%s$NI=<(!?HsI=<($r@Z$jBX$($k(B
+	   * @brief	ƒnƒ“ƒhƒAƒCƒRƒ“‚Ì•\¦^”ñ•\¦‚ğØ‚è‘Ö‚¦‚é
 	   */
 	  public void enableVisibleHand(boolean en)
 	  {
@@ -203,7 +204,7 @@ class ReversiBoard extends JPanel
 	  }
 
 	  /********************************************************************************
-	   * @brief	$BHWLL$r%j%;%C%H$9$k(B
+	   * @brief	”Õ–Ê‚ğƒŠƒZƒbƒg‚·‚é
 	   */
 	  public void reset()
 	  {
@@ -218,7 +219,7 @@ class ReversiBoard extends JPanel
 	  }
 
 	  /********************************************************************************
-	   * @brief	$B;XDj$5$l$?0LCV$K$"$k6p$r;2>H$9$k(B
+	   * @brief	w’è‚³‚ê‚½ˆÊ’u‚É‚ ‚é‹î‚ğQÆ‚·‚é
 	   */
 	  public ReversiPiece getPiece(int x, int y)
 	  {
@@ -226,9 +227,9 @@ class ReversiBoard extends JPanel
 	  }
 
 	  /********************************************************************************
-	   * @brief	$B;XDj$5$l$?0LCV$K$"$k6p$r;2>H$9$k(B
-	   * @param [in]	piece_type - $B6p$N<oJL(B
-	   * @return	$BHWLL>e$N6p$N?t(B
+	   * @brief	w’è‚³‚ê‚½ˆÊ’u‚É‚ ‚é‹î‚ğQÆ‚·‚é
+	   * @param [in]	piece_type - ‹î‚Ìí•Ê
+	   * @return	”Õ–Êã‚Ì‹î‚Ì”
 	   */
 	  public int countPieces(ReversiPiece.Type piece_type)
 	  {
@@ -254,15 +255,15 @@ class ReversiBoard extends JPanel
 	  }
 
 	  /********************************************************************************
-	   * @brief	$BHWLL$K6p$rCV$/(B
-	   * @param [in]	x, y  - $B6p$rCV$/0LCV(B
-	   * @param [in]	piece - $BCV$/6p(B
-	   * @return	true:$B6p$rCV$$$?!"(Bfalse:$B6p$rCV$1$J$$(B
+	   * @brief	”Õ–Ê‚É‹î‚ğ’u‚­
+	   * @param [in]	x, y  - ‹î‚ğ’u‚­ˆÊ’u
+	   * @param [in]	piece - ’u‚­‹î
+	   * @return	true:‹î‚ğ’u‚¢‚½Afalse:‹î‚ğ’u‚¯‚È‚¢
 	   */
 	  public boolean setPiece(int x, int y, ReversiPiece piece)
 	  {
 		 if ((0 <= x) && (x < WIDTH) && (0 <= y) && (y < HEIGHT))
-		 { /* $B;XDj$5$l$??'$N6p$rCV$/(B */
+		 { /* w’è‚³‚ê‚½F‚Ì‹î‚ğ’u‚­ */
 			m_piece_matrix[x][y] = piece;
 			return true;
 		 }
@@ -273,20 +274,20 @@ class ReversiBoard extends JPanel
 	  }
 
 	  /********************************************************************************
-	   * @brief	$B;XDj$5$l$??'$N6p$,CV$1$k8uJd$N0LCV$N%j%9%H$r<hF@$9$k(B
-	   * @param [in]	piece_type - $BCV$/6p$N<oJL(B
-	   * @return	$B$R$C$/$jJV$;$k0LCV$H!"$R$C$/$jJV$;$kAj<j6p$NG[Ns$N%^%C%W(B
+	   * @brief	w’è‚³‚ê‚½F‚Ì‹î‚ª’u‚¯‚éŒó•â‚ÌˆÊ’u‚ÌƒŠƒXƒg‚ğæ“¾‚·‚é
+	   * @param [in]	piece_type - ’u‚­‹î‚Ìí•Ê
+	   * @return	‚Ğ‚Á‚­‚è•Ô‚¹‚éˆÊ’u‚ÆA‚Ğ‚Á‚­‚è•Ô‚¹‚é‘Šè‹î‚Ì”z—ñ‚Ìƒ}ƒbƒv
 	   */
 	  public HashMap<Point, Vector<Point>> getCandidatePos(ReversiPiece.Type piece_type)
 	  {
-		 /* $B!c6p$,CV$1$k>l=j$rC5$9<j=g!d(B
-		  *   - $BHWLL>e$NA40h!J#8#x#8!K$KEO$C$F0J2<$rD4$Y$k(B
-		  *     - $BD4$Y$k0LCV$K6p$,CV$+$l$F$$$J$$(B
-		  *       - $BD4$Y$k0LCV$N>e2<:81&<P$a$N#8J}8~$N$$$:$l$+$KAj<j$N6p$,$"$k(B
-		  *         - $BAj<j$N6p$NJ}8~$K<+J,$N6p$,$"$k!JC<$^$G=gHV$K8+$FD4$Y$k!K(B
+		 /* ƒ‹î‚ª’u‚¯‚éêŠ‚ğ’T‚·è‡„
+		  *   - ”Õ–Êã‚Ì‘Sˆæi‚W‚˜‚Wj‚É“n‚Á‚ÄˆÈ‰º‚ğ’²‚×‚é
+		  *     - ’²‚×‚éˆÊ’u‚É‹î‚ª’u‚©‚ê‚Ä‚¢‚È‚¢
+		  *       - ’²‚×‚éˆÊ’u‚Ìã‰º¶‰EÎ‚ß‚Ì‚W•ûŒü‚Ì‚¢‚¸‚ê‚©‚É‘Šè‚Ì‹î‚ª‚ ‚é
+		  *         - ‘Šè‚Ì‹î‚Ì•ûŒü‚É©•ª‚Ì‹î‚ª‚ ‚éi’[‚Ü‚Å‡”Ô‚ÉŒ©‚Ä’²‚×‚éj
 		  */
 
-		 /* $B$R$C$/$jJV$;$k0LCV$H!"$R$C$/$jJV$;$kAj<j6p$NG[Ns$N%^%C%W(B */
+		 /* ‚Ğ‚Á‚­‚è•Ô‚¹‚éˆÊ’u‚ÆA‚Ğ‚Á‚­‚è•Ô‚¹‚é‘Šè‹î‚Ì”z—ñ‚Ìƒ}ƒbƒv */
 		 HashMap<Point, Vector<Point>> candidate_pos_map = new HashMap<Point, Vector<Point>>();
 
 		 int x, y;
@@ -297,7 +298,7 @@ class ReversiBoard extends JPanel
 			{
 			   ReversiPiece piece_target = m_piece_matrix[x][y];
 			   if (piece_target != null)
-			   { /* $B4{$K6p$,CV$$$F$"$C$?$iCV$1$J$$(B $B"*(B $B$=$3$OD4$Y$J$$(B */
+			   { /* Šù‚É‹î‚ª’u‚¢‚Ä‚ ‚Á‚½‚ç’u‚¯‚È‚¢ ¨ ‚»‚±‚Í’²‚×‚È‚¢ */
 				  continue;
 			   }
 
@@ -305,13 +306,13 @@ class ReversiBoard extends JPanel
 
 			   for (Point dir : AROUND_8DIR)
 			   {
-				  /* $B;XDj$7$?0LCV$NNY(B */
+				  /* w’è‚µ‚½ˆÊ’u‚Ì—× */
 				  int xx = x + dir.x;
 				  int yy = y + dir.y;
-				  /* $BNY$N0LCV$,HWLL$N30$J$iD4$Y$J$$(B */
+				  /* —×‚ÌˆÊ’u‚ª”Õ–Ê‚ÌŠO‚È‚ç’²‚×‚È‚¢ */
 				  if ((0 <= xx) && (xx < WIDTH) && (0 <= yy) && (yy < HEIGHT))
 				  {
-					 /* $BNY$N0LCV$KAj<j$N6p$,#1$D$G$bB8:_$7$?$i!"$R$C$/$jJV$;$k8uJd$N0LCV$H$9$k(B */
+					 /* —×‚ÌˆÊ’u‚É‘Šè‚Ì‹î‚ª‚P‚Â‚Å‚à‘¶İ‚µ‚½‚çA‚Ğ‚Á‚­‚è•Ô‚¹‚éŒó•â‚ÌˆÊ’u‚Æ‚·‚é */
 					 ReversiPiece piece_next = m_piece_matrix[xx][yy];
 					 if ((piece_next != null) && (piece_next.getType() != piece_type))
 					 {
@@ -321,10 +322,10 @@ class ReversiBoard extends JPanel
 				  }
 			   }
 
-			   /* $B$R$C$/$jJV$;$k8uJd$,8+$D$+$C$?!*(B */
+			   /* ‚Ğ‚Á‚­‚è•Ô‚¹‚éŒó•â‚ªŒ©‚Â‚©‚Á‚½I */
 			   if (pos_candidate != null)
 			   {
-				  /* $BK\Ev$K$R$C$/$jJV$;$k$H$3$m$rC5$7$F3JG<$9$k(B */				  
+				  /* –{“–‚É‚Ğ‚Á‚­‚è•Ô‚¹‚é‚Æ‚±‚ë‚ğ’T‚µ‚ÄŠi”[‚·‚é */				  
 				  Vector<Point> pos_turn_pieces = getTurnPieces(pos_candidate, piece_type);
 				  if (0 < pos_turn_pieces.size())
 				  {
@@ -338,30 +339,30 @@ class ReversiBoard extends JPanel
 	  }
 
 	  /********************************************************************************
-	   * @brief	$B$R$C$/$jJV$;$kAj<j6p$N0LCV$r<hF@$9$k(B
-	   * @param [in]	pos   - $B<+J,$N6p$N0LCV(B
-	   * @param [in]	piece - $B<+J,$N6p$N<oJL(B
-	   * @return	$B$R$C$/$jJV$;$kAj<j6p$N0LCV$NG[Ns!J$J$1$l$P6u$NG[Ns!K(B
-	   * @note	$B<+J,$N6p$N0LCV$+$i#8J}8~$r%9%-%c%s$7$F!"$R$C$/$jJV$;$kAj<j$N6p$r(B
-	   *        $BA4It%j%9%H%"%C%W$7$FG[Ns$K3JG<$9$k!#(B
-	   * @note	$BG[Ns$N=gHV$O!"<+J,$N6p$N0LCV$+$i0lJ}8~$KA\$7$?=gHV$G3JG<$9$k!#(B
-	   *        $B!JNc!'(B $B:G=i$O>eJ}8~$NA4It!"<!$K1&<P$a>eJ}8~$NA4It!"$=$N<!$O1&J}8~$NA4It!&!&!&!K(B
-	   *        $B$3$&$9$k$3$H$G!"6p$r$R$C$/$jJV$9%"%K%a!<%7%g%s$r$9$k:]$K(B
-	   *        $B<+J,$N6p$K6a$$$H$3$m$+$i0lJ}8~$K$R$C$/$jJV$k$h$&$K8+$;$k$3$H$,$G$-$k!#(B
+	   * @brief	‚Ğ‚Á‚­‚è•Ô‚¹‚é‘Šè‹î‚ÌˆÊ’u‚ğæ“¾‚·‚é
+	   * @param [in]	pos   - ©•ª‚Ì‹î‚ÌˆÊ’u
+	   * @param [in]	piece - ©•ª‚Ì‹î‚Ìí•Ê
+	   * @return	‚Ğ‚Á‚­‚è•Ô‚¹‚é‘Šè‹î‚ÌˆÊ’u‚Ì”z—ñi‚È‚¯‚ê‚Î‹ó‚Ì”z—ñj
+	   * @note	©•ª‚Ì‹î‚ÌˆÊ’u‚©‚ç‚W•ûŒü‚ğƒXƒLƒƒƒ“‚µ‚ÄA‚Ğ‚Á‚­‚è•Ô‚¹‚é‘Šè‚Ì‹î‚ğ
+	   *        ‘S•”ƒŠƒXƒgƒAƒbƒv‚µ‚Ä”z—ñ‚ÉŠi”[‚·‚éB
+	   * @note	”z—ñ‚Ì‡”Ô‚ÍA©•ª‚Ì‹î‚ÌˆÊ’u‚©‚çˆê•ûŒü‚É‘{‚µ‚½‡”Ô‚ÅŠi”[‚·‚éB
+	   *        i—áF Å‰‚Íã•ûŒü‚Ì‘S•”AŸ‚É‰EÎ‚ßã•ûŒü‚Ì‘S•”A‚»‚ÌŸ‚Í‰E•ûŒü‚Ì‘S•”EEEj
+	   *        ‚±‚¤‚·‚é‚±‚Æ‚ÅA‹î‚ğ‚Ğ‚Á‚­‚è•Ô‚·ƒAƒjƒ[ƒVƒ‡ƒ“‚ğ‚·‚éÛ‚É
+	   *        ©•ª‚Ì‹î‚É‹ß‚¢‚Æ‚±‚ë‚©‚çˆê•ûŒü‚É‚Ğ‚Á‚­‚è•Ô‚é‚æ‚¤‚ÉŒ©‚¹‚é‚±‚Æ‚ª‚Å‚«‚éB
 	   */
 	  private Vector<Point> getTurnPieces(Point pos, ReversiPiece.Type piece_type)
 	  {
 		 Vector<Point> pos_turn_pieces = new Vector<Point>();
 
-		 /* $B#8J}8~$9$Y$F$K$D$$$F$R$C$/$jJV$;$kAj<j6p$,$"$k$+C5$7$FG[Ns$K3JG<$9$k(B */
+		 /* ‚W•ûŒü‚·‚×‚Ä‚É‚Â‚¢‚Ä‚Ğ‚Á‚­‚è•Ô‚¹‚é‘Šè‹î‚ª‚ ‚é‚©’T‚µ‚Ä”z—ñ‚ÉŠi”[‚·‚é */
 		 for (Point dir : AROUND_8DIR)
 		 {
 			Point pos_find = new Point(pos);
 			Vector<Point> temp_pos_pieces = new Vector<Point>();
 
-			for (int n=0; n<(8-1); n++)  /* $B0lJ}8~$GD4$Y$i$l$k:GBg?t!a(B(8-1) */
+			for (int n=0; n<(8-1); n++)  /* ˆê•ûŒü‚Å’²‚×‚ç‚ê‚éÅ‘å”(8-1) */
 			{
-			   /* $B0lJ}8~$:$D$R$C$/$jJV$;$kAj<j6p$,$"$k$+C5$9(B */
+			   /* ˆê•ûŒü‚¸‚Â‚Ğ‚Á‚­‚è•Ô‚¹‚é‘Šè‹î‚ª‚ ‚é‚©’T‚· */
 			   pos_find.translate(dir.x, dir.y);
 			   int xx = pos_find.x;
 			   int yy = pos_find.y;
@@ -371,26 +372,26 @@ class ReversiBoard extends JPanel
 				  ReversiPiece piece = m_piece_matrix[xx][yy];
 				  if (piece == null)
 				  {
-					 break;	/* $B64$a$J$$!*(B $B"*(B $B<!$NJ}8~$X(B */
+					 break;	/* ‹²‚ß‚È‚¢I ¨ Ÿ‚Ì•ûŒü‚Ö */
 				  }
 				  else
 				  {
-					 /* $B$R$C$/$jJV$;$k8uJd$N6p$,$"$k!)(B */
+					 /* ‚Ğ‚Á‚­‚è•Ô‚¹‚éŒó•â‚Ì‹î‚ª‚ ‚éH */
 					 if (piece.getType() == piece_type)
-					 {/* $B<+J,$HF1$8?'$N6p$J$i64$a$k(B
-					   * $B"*(B $B$R$C$/$jJV$;$kAj<j6p!J$NG[Ns!K$r3NDj$9$k!J"((B $B6u$N>l9g$b$"$k!K(B */
+					 {/* ©•ª‚Æ“¯‚¶F‚Ì‹î‚È‚ç‹²‚ß‚é
+					   * ¨ ‚Ğ‚Á‚­‚è•Ô‚¹‚é‘Šè‹îi‚Ì”z—ñj‚ğŠm’è‚·‚éi¦ ‹ó‚Ìê‡‚à‚ ‚éj */
 						pos_turn_pieces.addAll(temp_pos_pieces);
-						break;	/* $B0lJ}8~$rD4$Y=*$o$C$?(B $B"*(B $B<!$NJ}8~$X(B */
+						break;	/* ˆê•ûŒü‚ğ’²‚×I‚í‚Á‚½ ¨ Ÿ‚Ì•ûŒü‚Ö */
 					 }
 					 else
-					 { /* $B$R$C$/$jJV$;$k8uJd$N6p$rDI2C$7$F$$$/(B */
+					 { /* ‚Ğ‚Á‚­‚è•Ô‚¹‚éŒó•â‚Ì‹î‚ğ’Ç‰Á‚µ‚Ä‚¢‚­ */
 						temp_pos_pieces.add(new Point(xx, yy));
 					 }
 				  }
 			   }
 			   else
 			   {
-				  break;	/* $B64$a$J$$!*(B $B"*(B $B<!$NJ}8~$X(B */
+				  break;	/* ‹²‚ß‚È‚¢I ¨ Ÿ‚Ì•ûŒü‚Ö */
 			   }
 			}
 		 }
@@ -399,7 +400,7 @@ class ReversiBoard extends JPanel
 	  }
 
 	  /********************************************************************************
-	   * @brief	$BHWLL$rIA2h$9$k(B
+	   * @brief	”Õ–Ê‚ğ•`‰æ‚·‚é
 	   */
 	  @Override /* JPanel.paintComponent */
 	  protected void paintComponent(Graphics g)
@@ -413,7 +414,7 @@ class ReversiBoard extends JPanel
 		 int d = size.width / WIDTH;
 		 Dimension size_piece = new Dimension(d, d);
 
-		 /* $BHWLL$rIA2h$9$k(B */
+		 /* ”Õ–Ê‚ğ•`‰æ‚·‚é */
 		 g.setColor(Color.BLACK);
 		 for (y=0; y<HEIGHT; y++)
 		 {
@@ -427,7 +428,7 @@ class ReversiBoard extends JPanel
 			}
 		 }
 
-		 /* $BCV$+$l$F$$$k6p$rIA2h$9$k(B */
+		 /* ’u‚©‚ê‚Ä‚¢‚é‹î‚ğ•`‰æ‚·‚é */
 		 for (y=0; y<HEIGHT; y++)
 		 {
 			int yy = y * d;
@@ -447,7 +448,7 @@ class ReversiBoard extends JPanel
 			}
 		 }
 
-		 /* $B?M4V$N;X$7<j$N;~$KHWLL>e$K%^%&%9%+!<%=%k$,$"$k$J$i!";X$7<j$rIA2h$9$k(B */
+		 /* lŠÔ‚Ìw‚µè‚Ì‚É”Õ–Êã‚Éƒ}ƒEƒXƒJ[ƒ\ƒ‹‚ª‚ ‚é‚È‚çAw‚µè‚ğ•`‰æ‚·‚é */
 		 if (m_isVisibleHand)
 		 {
 			Point pt_cursor = MouseInfo.getPointerInfo().getLocation();
@@ -457,7 +458,7 @@ class ReversiBoard extends JPanel
 
 			Rectangle rect = new Rectangle(size);
 			if (rect.contains(pt_cursor))
-			{ /* $BHWLL$N%^%9L\$N??$sCf$"$?$j$r%O%s%I$N?M:9$7;X$,;X$9$h$&$K:BI8$rD4@0$9$k(B */
+			{ /* ”Õ–Ê‚Ìƒ}ƒX–Ú‚Ì^‚ñ’†‚ ‚½‚è‚ğƒnƒ“ƒh‚Ìl·‚µw‚ªw‚·‚æ‚¤‚ÉÀ•W‚ğ’²®‚·‚é */
 			   Point pos = convertComponentPosToBoardPos(pt_cursor);
 			   int x_icon = (pos.x * d) + ((d - m_icon_hand.getIconWidth()) / 2) + 5;
 			   int y_icon = (pos.y * d) + ((d - m_icon_hand.getIconHeight()) / 2) + 12;
@@ -467,8 +468,8 @@ class ReversiBoard extends JPanel
 	  }
 
 	  /********************************************************************************
-	   * @brief	$B6p$rCV$3$&$H$7$?$3$H$rDLCN$7$?$$%W%l%$%d!<$r%;%C%H$9$k(B
-	   * @note	AutoPlayer$B$O<+J,$G6p$rCV$/$N$G%;%C%H$9$kI,MW$O$J$$(B
+	   * @brief	‹î‚ğ’u‚±‚¤‚Æ‚µ‚½‚±‚Æ‚ğ’Ê’m‚µ‚½‚¢ƒvƒŒƒCƒ„[‚ğƒZƒbƒg‚·‚é
+	   * @note	AutoPlayer‚Í©•ª‚Å‹î‚ğ’u‚­‚Ì‚ÅƒZƒbƒg‚·‚é•K—v‚Í‚È‚¢
 	   */
 	  public void setNotifier(Player player)
 	  {
