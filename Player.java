@@ -217,6 +217,9 @@ class AutoPlayer extends Player
 	  @Override
 	  protected Point doThink(HashMap<Point, Vector<Point>> candidate_pos_map)
 	  {
+		 try { Thread.sleep(500); }
+		 catch(Exception e) {}
+
 		 Point pos = null;
 
 		 /* 置いたら有利になるところを調べて、可能なら置く */

@@ -180,56 +180,59 @@ public class GameManager
 
 		 /* 相手の駒をひっくり返す */
 		 Vector<Point> pos_turn_pieces = candidate_pos_map.get(pos);
-		 /* TODO: 20180219  ここで駒をひっくり返す（アニメーションも実行する？）
-		  *
-		  *	＜アニメーション方法（案）＞
-		  *  - 準備として、盤面上のひっくり返す駒すべてについて：
-		  *    - 駒タイプを変更する（内部的にひっくり返す）
-		  *    - アニメーション属性をに設定する
-		  *      （ Rate：0％、From：現在の駒タイプ、To：ひっくり返した後の駒タイプ ）
-		  *
-		  *  - アニメーションループ：
-		  *    - 盤面上のひっくり返す駒すべてについて：
-		  *      - アニメーション Rateをインクリメントする（+10％とか）
-		  *      - 盤面を再描画する
-		  *        - 駒の描画処理にて、アニメーション Rateに応じた描画をする
-		  *          （Rateが 50％なら半分ひっくり返したような絵を描画する）
-		  *        - 上記をアニメーション Rateが 100％になるまで繰り返す
-		  */
-		 //for (Point pos_turn : pos_turn_pieces)
-		 //{
-		 //	m_board.setPiece(pos_turn.x, pos_turn.y, new ReversiPiece(player.getPieceType()));
-		 //	m_board.repaint();
-		 //	try { Thread.sleep(200); }
-		 //	catch(Exception e) {}
-		 //}
+		 turnPirces(pos_turn_pieces, player.getPieceType());
 
-		 for (Point pos_turn : pos_turn_pieces)
-		 {
-			piece = new ReversiPiece(player.getPieceType());
-			piece.resetAnimation();
-		 	m_board.setPiece(pos_turn.x, pos_turn.y, piece);
-		 }
-		 
+		 return true;	/* 駒が置けた */
+	  }
+
+	  /********************************************************************************
+	   * @brief		相手の駒をひっくり返す
+	   * @param [in]	pos_turn_pieces - ひっくり返す駒の位置の配列
+	   * @param [in]	piece_type      - 指し手の駒の種別
+	   * @note		駒をひっくり返すアニメーション描画を行う
+	   */
+	  private void turnPirces(Vector<Point> pos_turn_pieces, ReversiPiece.Type piece_type)
+	  {
+		 /* 駒が全部ひっくり返るまでアニメーションする */
+		 /* ひっくり返す駒のキュー */
+		 LinkedList<ReversiPiece> que_piece = new LinkedList<ReversiPiece>();
+		 /* アニメーション中の駒のキュー */
+		 LinkedList<ReversiPiece> que_remain = new LinkedList<ReversiPiece>();
+
+		 int idx_posary = 0;
+		 int count = 0;
 		 boolean isAnimating = true;
 		 while(isAnimating)
 		 {
-		 	try { Thread.sleep(100); }
+		 	try { Thread.sleep(20); }
 		 	catch(Exception e) {}
 
-			isAnimating = true;
-			for (Point pos_turn : pos_turn_pieces)
+			/* 少し間隔をあけて、ひっくり返す駒を順番に登録していく */
+			if ((count % 5 == 0) && (idx_posary < pos_turn_pieces.size()))
 			{
-			   piece = m_board.getPiece(pos_turn.x, pos_turn.y);
-			   if (piece.progressAnimation())
+			   ReversiPiece piece = new ReversiPiece(piece_type);
+			   piece.resetAnimation();
+			   que_piece.add(piece);
+			   Point pos_turn = pos_turn_pieces.get(idx_posary);
+			   m_board.setPiece(pos_turn.x, pos_turn.y, piece);
+			   idx_posary += 1;
+			}
+			/* ひっくり返すアニメーションを進める */
+			isAnimating = false;
+			for (ReversiPiece piece : que_piece)
+			{
+			   if (!piece.progressAnimation())
 			   {
-				  isAnimating = false;
+				  que_remain.add(piece);
+				  isAnimating = true;
 			   }
 			}
-
+			/* アニメーション後のボードを描画する */
 		 	m_board.repaint();
+			/* まだアニメーションが完了していない駒で繰り返す */
+			que_piece = que_remain;
+			que_remain = new LinkedList<ReversiPiece>();
+			count += 1;
 		 }
-
-		 return true;	/* 駒が置けた */
 	  }
 }

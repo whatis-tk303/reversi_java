@@ -124,6 +124,26 @@ class AnimationProp
 
 		 m_render.doAnimation(this);
 	  }
+
+	  /********************************************************************************
+	   * @brief		アニメーションをリセットする
+	   * @note		アニメーションを開始する際にこのメソッドを呼んでおき、
+	   *			順次 progressAnimation()を呼ぶことでアニメーションを進捗させる
+	   */
+	  public void resetAnimation()
+	  {
+		 setRate(RATE_MIN);
+	  }
+
+	  /********************************************************************************
+	   * @brief		アニメーションを進める
+	   * @return	true:アニメーションが完了した、false:まだアニメーションの途中
+	   */
+	  public boolean progressAnimation(int rate)
+	  {
+		 increment(rate);
+		 return (getRate() == RATE_MAX);
+	  }
 }
 
 
@@ -186,10 +206,8 @@ class ReversiPiece implements AnimationRender
 	  }
 
 	  /********************************************************************************
-	   * @brief	アニメーションレンダー
-	   * @param [in]	g    - 描画対象のグラフィックス
-	   * @param [in]	pos  - 描画する位置（左上隅）
-	   * @param [in]	size - 描画する矩形のサイズ（幅、高さ）
+	   * @brief	アニメーションを実行する
+	   * @param [in]	anim_prop - アニメーションの属性
 	   */
 	  @Override /* AnimationRender */
 	  public void doAnimation(AnimationProp anim_prop)
@@ -200,13 +218,13 @@ class ReversiPiece implements AnimationRender
 		 Icon icon_to = m_type.icon;
 
 		 if (rate == AnimationProp.RATE_MIN)
-		 {
+		 { /* ひっくり返す前 */
 			m_anim_x = 0;
 			m_anim_y = 0;
 			m_anim_icon = icon_from;
 		 }
 		 else if (rate == AnimationProp.RATE_MAX)
-		 {
+		 { /* ひっくり返した後 */
 			m_anim_x = 0;
 			m_anim_y = 0;
 			m_anim_icon = icon_to;
@@ -214,32 +232,37 @@ class ReversiPiece implements AnimationRender
 		 else
 		 {
 			m_anim_x = 0;
+			double omega = ((double)rate / AnimationProp.RATE_MAX) * Math.PI;
+			m_anim_y = (int)(40.0 * -Math.sin(omega));
+
 			if (rate < (AnimationProp.RATE_MAX / 2))
 			{ /* ひっくり返しの前半 */
-			   m_anim_y = (int)(-rate * 0.5);
 			   m_anim_icon = icon_from;
 			}
 			else
 			{ /* ひっくり返しの後半 */
-			   m_anim_y = (int)((rate - (AnimationProp.RATE_MAX)) * 0.5);
 			   m_anim_icon = icon_to;
 			}
 		 }
 	  }
 
-	  /**/
+	  /********************************************************************************
+	   * @brief		アニメーションをリセットする
+	   * @note		アニメーションを開始する際にこのメソッドを呼んでおき、
+	   *			順次 progressAnimation()を呼ぶことでアニメーションを進捗させる
+	   */
 	  public void resetAnimation()
 	  {
-		 m_anim_prop.setRate(AnimationProp.RATE_MIN);
+		 m_anim_prop.resetAnimation();
 	  }
 
-	  /* @brief		アニメーションを進める
+	  /********************************************************************************
+	   * @brief		アニメーションを進める
 	   * @return	true:アニメーションが完了した、false:まだアニメーションの途中
 	   */
 	  public boolean progressAnimation()
 	  {
-		 m_anim_prop.increment(10);
-		 return (m_anim_prop.getRate() == AnimationProp.RATE_MAX);
+		 return m_anim_prop.progressAnimation(10);
 	  }
 }
 
