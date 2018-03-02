@@ -34,8 +34,6 @@ import java.awt.event.*;
 import javax.swing.*;
 
 
-
-
 /*********************************************************************************
  * @brief	駒をアニメーションさせるI/F
  */
@@ -168,6 +166,26 @@ class ReversiPiece implements AnimationRender
 		 }
 	  };
 
+	  /* @brief	駒の種別 { 黒 | 白 } */
+	  public enum AnimImage {
+		 B20W80("piece_b20w80.png"),
+		 B35W65("piece_b35w65.png"),
+		 B50W50("piece_b50w50.png"),
+		 W50B50("piece_w50b50.png"),
+		 B65W35("piece_b65w35.png"),
+		 B80W20("piece_b80w20.png"),
+         ;
+
+		 private String image_file;
+		 private Icon icon;
+
+		 private AnimImage(String fname)
+		 {
+			this.image_file = fname;
+			this.icon = new ImageIcon(fname);
+		 }
+	  };
+
 	  private Type m_type;
 	  private AnimationProp m_anim_prop;
 	  private int m_anim_x, m_anim_y;
@@ -213,8 +231,8 @@ class ReversiPiece implements AnimationRender
 	  public void doAnimation(AnimationProp anim_prop)
 	  {
 		 int rate = anim_prop.getRate();
-
-		 Icon icon_from = ((m_type == Type.BLACK) ? Type.WHITE : Type.BLACK).icon;
+		 boolean isBlack = (m_type == Type.BLACK);
+		 Icon icon_from = (isBlack ? Type.WHITE : Type.BLACK).icon;
 		 Icon icon_to = m_type.icon;
 
 		 if (rate == AnimationProp.RATE_MIN)
@@ -235,12 +253,32 @@ class ReversiPiece implements AnimationRender
 			double omega = ((double)rate / AnimationProp.RATE_MAX) * Math.PI;
 			m_anim_y = (int)(40.0 * -Math.sin(omega));
 
-			if (rate < (AnimationProp.RATE_MAX / 2))
-			{ /* ひっくり返しの前半 */
+			if (rate < (AnimationProp.RATE_MAX * 0.1))
+			{
 			   m_anim_icon = icon_from;
 			}
-			else
-			{ /* ひっくり返しの後半 */
+			else if (rate < (AnimationProp.RATE_MAX * 0.2))
+			{
+			   m_anim_icon = (isBlack ? AnimImage.B20W80 : AnimImage.B80W20).icon;
+			}
+			else if (rate < (AnimationProp.RATE_MAX * 0.35))
+			{
+			   m_anim_icon = (isBlack ? AnimImage.B35W65 : AnimImage.B65W35).icon;
+			}
+			else if (rate < (AnimationProp.RATE_MAX * 0.5))
+			{
+			   m_anim_icon = (isBlack ? AnimImage.W50B50 : AnimImage.B50W50).icon;
+			}
+			else if (rate < (AnimationProp.RATE_MAX * 0.65))
+			{
+			   m_anim_icon = (isBlack ? AnimImage.B65W35 : AnimImage.B35W65).icon;
+			}
+			else if (rate < (AnimationProp.RATE_MAX * 0.8))
+			{
+			   m_anim_icon = (isBlack ? AnimImage.B80W20 : AnimImage.B20W80).icon;
+			}
+			else if (rate < (AnimationProp.RATE_MAX * 0.9))
+			{
 			   m_anim_icon = icon_to;
 			}
 		 }

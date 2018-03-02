@@ -204,7 +204,7 @@ public class GameManager
 		 boolean isAnimating = true;
 		 while(isAnimating)
 		 {
-		 	try { Thread.sleep(20); }
+		 	try { Thread.sleep(40); }
 		 	catch(Exception e) {}
 
 			/* ­‚µŠÔŠu‚ğ‚ ‚¯‚ÄA‚Ğ‚Á‚­‚è•Ô‚·‹î‚ğ‡”Ô‚É“o˜^‚µ‚Ä‚¢‚­ */
