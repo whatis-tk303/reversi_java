@@ -208,7 +208,7 @@ public class GameManager
 		 	catch(Exception e) {}
 
 			/* ­‚µŠÔŠu‚ğ‚ ‚¯‚ÄA‚Ğ‚Á‚­‚è•Ô‚·‹î‚ğ‡”Ô‚É“o˜^‚µ‚Ä‚¢‚­ */
-			if ((count % 5 == 0) && (idx_posary < pos_turn_pieces.size()))
+			if ((count % 3 == 0) && (idx_posary < pos_turn_pieces.size()))
 			{
 			   ReversiPiece piece = new ReversiPiece(piece_type);
 			   piece.resetAnimation();

@@ -347,6 +347,17 @@ class ReversiBoard extends JPanel
 				  {
 					 doMouseClicked(e);
 				  }
+
+				  @Override public void mouseReleased(MouseEvent e) 
+				  {
+					 doMouseClicked(e);
+				  }
+
+				  @Override public void mouseDragged(MouseEvent e) 
+				  {
+					 System.out.println("mouseDragged()");
+					 doMouseMoved(e);
+				  }
 			});
 
 		 /* 盤面をマウスカーソルが動いた時の動作を登録する */
@@ -626,7 +637,9 @@ class ReversiBoard extends JPanel
 	  protected void paintComponent(Graphics g)
 	  {
 		 Dimension size = getSize();
-		 Color color_board = new Color(32, 96, 0);
+		 Color color_board = new Color(0, 80, 0);
+		 Color color_line  = new Color(0, 48, 32);
+
 		 setForeground(color_board);
 		 g.fillRect(0, 0, size.width, size.height);
 
@@ -635,36 +648,31 @@ class ReversiBoard extends JPanel
 		 Dimension size_piece = new Dimension(d, d);
 
 		 /* 盤面を描画する */
-		 g.setColor(Color.BLACK);
+		 g.setColor(color_line);
 		 for (y=0; y<HEIGHT; y++)
 		 {
 			int yy = y * d;
-			g.drawLine(0, yy, size.width, yy);
 
 			for (x=0; x<WIDTH; x++)
 			{
 			   int xx = x * d;
-			   g.drawLine(xx, 0, xx, size.height);
+			   g.drawRect(xx, yy, d-1, d-1);
 			}
 		 }
 
 		 /* 置かれている駒を描画する */
 		 for (y=0; y<HEIGHT; y++)
 		 {
-			int yy = y * d;
-
 			for (x=0; x<WIDTH; x++)
 			{
 			   ReversiPiece piece = m_piece_matrix[x][y];
 			   
-			   if (piece == null)
+			   if (piece != null)
 			   {
-				  continue;
+				  int xx = x * d;
+				  int yy = y * d;
+				  piece.rendering(g, new Point(xx, yy), size_piece);
 			   }
-
-			   int xx = x * d;
-			   Point pos = new Point(xx, yy);
-			   piece.rendering(g, pos, size_piece);
 			}
 		 }
 
@@ -678,10 +686,17 @@ class ReversiBoard extends JPanel
 
 			Rectangle rect = new Rectangle(size);
 			if (rect.contains(pt_cursor))
-			{ /* 盤面のマス目の真ん中あたりをハンドの人差し指が指すように座標を調整する */
+			{
 			   Point pos = convertComponentPosToBoardPos(pt_cursor);
-			   int x_icon = (pos.x * d) + ((d - m_icon_hand.getIconWidth()) / 2) + 5;
-			   int y_icon = (pos.y * d) + ((d - m_icon_hand.getIconHeight()) / 2) + 12;
+
+			   /* 駒を指す位置を枠で囲う */
+			   //Rectangle rc_frame = new Rectangle(pos.x * d, pos.y * d, d, d);
+			   g.setColor(Color.YELLOW);
+			   g.drawRect(pos.x * d +1, pos.y * d +1, d-3, d-3);
+
+			   /* マウスカーソルの先あたりをハンドの人差し指が指すように座標を調整する */
+			   int x_icon = pt_cursor.x - 18;
+			   int y_icon = pt_cursor.y + 6;
 			   m_icon_hand.paintIcon(this, g, x_icon, y_icon);
 			}
 		 }
