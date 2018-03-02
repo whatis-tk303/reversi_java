@@ -180,13 +180,54 @@ public class GameManager
 
 		 /* 相手の駒をひっくり返す */
 		 Vector<Point> pos_turn_pieces = candidate_pos_map.get(pos);
-		 /* TODO: 20180219  ここで駒をひっくり返す（アニメーションも実行する？） */
+		 /* TODO: 20180219  ここで駒をひっくり返す（アニメーションも実行する？）
+		  *
+		  *	＜アニメーション方法（案）＞
+		  *  - 準備として、盤面上のひっくり返す駒すべてについて：
+		  *    - 駒タイプを変更する（内部的にひっくり返す）
+		  *    - アニメーション属性をに設定する
+		  *      （ Rate：0％、From：現在の駒タイプ、To：ひっくり返した後の駒タイプ ）
+		  *
+		  *  - アニメーションループ：
+		  *    - 盤面上のひっくり返す駒すべてについて：
+		  *      - アニメーション Rateをインクリメントする（+10％とか）
+		  *      - 盤面を再描画する
+		  *        - 駒の描画処理にて、アニメーション Rateに応じた描画をする
+		  *          （Rateが 50％なら半分ひっくり返したような絵を描画する）
+		  *        - 上記をアニメーション Rateが 100％になるまで繰り返す
+		  */
+		 //for (Point pos_turn : pos_turn_pieces)
+		 //{
+		 //	m_board.setPiece(pos_turn.x, pos_turn.y, new ReversiPiece(player.getPieceType()));
+		 //	m_board.repaint();
+		 //	try { Thread.sleep(200); }
+		 //	catch(Exception e) {}
+		 //}
+
 		 for (Point pos_turn : pos_turn_pieces)
 		 {
-			m_board.setPiece(pos_turn.x, pos_turn.y, new ReversiPiece(player.getPieceType()));
-			m_board.repaint();
-			try { Thread.sleep(200); }
-			catch(Exception e) {}
+			piece = new ReversiPiece(player.getPieceType());
+			piece.resetAnimation();
+		 	m_board.setPiece(pos_turn.x, pos_turn.y, piece);
+		 }
+		 
+		 boolean isAnimating = true;
+		 while(isAnimating)
+		 {
+		 	try { Thread.sleep(100); }
+		 	catch(Exception e) {}
+
+			isAnimating = true;
+			for (Point pos_turn : pos_turn_pieces)
+			{
+			   piece = m_board.getPiece(pos_turn.x, pos_turn.y);
+			   if (piece.progressAnimation())
+			   {
+				  isAnimating = false;
+			   }
+			}
+
+		 	m_board.repaint();
 		 }
 
 		 return true;	/* 駒が置けた */

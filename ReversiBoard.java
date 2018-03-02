@@ -34,10 +34,103 @@ import java.awt.event.*;
 import javax.swing.*;
 
 
+
+
+/*********************************************************************************
+ * @brief	駒をアニメーションさせるI/F
+ */
+interface AnimationRender
+{
+	  /* アニメーションの進捗率を設定する */
+	  public void doAnimation(AnimationProp anim_prop);
+}
+
+
+/*********************************************************************************
+ * @brief	駒をアニメーションさせる属性
+ */
+class AnimationProp
+{
+	  public static final int RATE_MIN = 0;
+	  public static final int RATE_MAX = 100;
+
+	  private int m_rate;  /* アニメーション進捗率（0 .. 100%） */
+	  private Object m_from;
+	  private Object m_to;
+	  private AnimationRender m_render;
+
+	  /* constructor */
+	  public AnimationProp(AnimationRender render)
+	  {
+		 m_rate = 0;
+		 m_from = null;
+		 m_to = null;
+		 m_render = render;
+	  }
+
+	  /* 進捗率を取得する */
+	  public int getRate()
+	  {
+		 return m_rate;
+	  }
+
+	  /* fromを取得する */
+	  public Object getFrom()
+	  {
+		 return m_from;
+	  }
+
+	  /* toを取得する */
+	  public Object getTo()
+	  {
+		 return m_to;
+	  }
+
+	  /* 初期化 */
+	  public void initProp(Object from, Object to)
+	  {
+		 m_rate = RATE_MIN;
+		 m_from = from;
+		 m_to = to;
+	  }
+
+	  /* アニメーションの進捗率を設定する */
+	  public void setRate(int rate)
+	  {
+		 if (rate < RATE_MIN)
+		 {
+			m_rate = RATE_MIN;
+		 }
+		 else if (RATE_MAX < rate)
+		 {
+			m_rate = RATE_MAX;
+		 }
+		 else
+		 {
+			m_rate = rate;
+		 }
+
+		 m_render.doAnimation(this);
+	  }
+
+	  /* アニメーションの進捗を進める */
+	  public void increment(int rate)
+	  {
+		 m_rate += rate;
+		 if (RATE_MAX < m_rate)
+		 {
+			m_rate = RATE_MAX;
+		 }
+
+		 m_render.doAnimation(this);
+	  }
+}
+
+
 /*********************************************************************************
  * @brief	リバーシの駒
  */
-class ReversiPiece
+class ReversiPiece implements AnimationRender
 {
 	  /* @brief	駒の種別 { 黒 | 白 } */
 	  public enum Type {
@@ -56,6 +149,9 @@ class ReversiPiece
 	  };
 
 	  private Type m_type;
+	  private AnimationProp m_anim_prop;
+	  private int m_anim_x, m_anim_y;
+	  private Icon m_anim_icon;
 
 	  /********************************************************************************
 	   * @brief	constructor
@@ -63,6 +159,8 @@ class ReversiPiece
 	  public ReversiPiece(Type type)
 	  {
 		 m_type = type;
+		 m_anim_prop = new AnimationProp(this);
+		 m_anim_prop.setRate(AnimationProp.RATE_MAX);  /* 最終的にひっくり返った状態 */
 	  }
 
 	  /* @brief	駒の種別を取得する */
@@ -80,7 +178,68 @@ class ReversiPiece
 	  public void rendering(Graphics g, Point pos, Dimension size)
 	  {
 		 /* TODO: 20180301  sizeに合わせてイメージを拡大・縮小する */
-		 m_type.icon.paintIcon(null, g, pos.x, pos.y);
+		 //m_type.icon.paintIcon(null, g, pos.x, pos.y);
+		 int x = pos.x + m_anim_x;
+		 int y = pos.y + m_anim_y;
+		 Icon icon = m_anim_icon;
+		 m_anim_icon.paintIcon(null, g, x, y);
+	  }
+
+	  /********************************************************************************
+	   * @brief	アニメーションレンダー
+	   * @param [in]	g    - 描画対象のグラフィックス
+	   * @param [in]	pos  - 描画する位置（左上隅）
+	   * @param [in]	size - 描画する矩形のサイズ（幅、高さ）
+	   */
+	  @Override /* AnimationRender */
+	  public void doAnimation(AnimationProp anim_prop)
+	  {
+		 int rate = anim_prop.getRate();
+
+		 Icon icon_from = ((m_type == Type.BLACK) ? Type.WHITE : Type.BLACK).icon;
+		 Icon icon_to = m_type.icon;
+
+		 if (rate == AnimationProp.RATE_MIN)
+		 {
+			m_anim_x = 0;
+			m_anim_y = 0;
+			m_anim_icon = icon_from;
+		 }
+		 else if (rate == AnimationProp.RATE_MAX)
+		 {
+			m_anim_x = 0;
+			m_anim_y = 0;
+			m_anim_icon = icon_to;
+		 }
+		 else
+		 {
+			m_anim_x = 0;
+			if (rate < (AnimationProp.RATE_MAX / 2))
+			{ /* ひっくり返しの前半 */
+			   m_anim_y = (int)(-rate * 0.5);
+			   m_anim_icon = icon_from;
+			}
+			else
+			{ /* ひっくり返しの後半 */
+			   m_anim_y = (int)((rate - (AnimationProp.RATE_MAX)) * 0.5);
+			   m_anim_icon = icon_to;
+			}
+		 }
+	  }
+
+	  /**/
+	  public void resetAnimation()
+	  {
+		 m_anim_prop.setRate(AnimationProp.RATE_MIN);
+	  }
+
+	  /* @brief		アニメーションを進める
+	   * @return	true:アニメーションが完了した、false:まだアニメーションの途中
+	   */
+	  public boolean progressAnimation()
+	  {
+		 m_anim_prop.increment(10);
+		 return (m_anim_prop.getRate() == AnimationProp.RATE_MAX);
 	  }
 }
 
