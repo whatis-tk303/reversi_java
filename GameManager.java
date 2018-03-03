@@ -204,10 +204,11 @@ public class GameManager
 		 boolean isAnimating = true;
 		 while(isAnimating)
 		 {
+			/* アニメーションする時間間隔（値は feelingで決める） */
 		 	try { Thread.sleep(40); }
 		 	catch(Exception e) {}
 
-			/* 少し間隔をあけて、ひっくり返す駒を順番に登録していく */
+			/* 少し間隔をあけて、ひっくり返す駒を順番に登録していく （間隔は feelingで決める） */
 			if ((count % 3 == 0) && (idx_posary < pos_turn_pieces.size()))
 			{
 			   ReversiPiece piece = new ReversiPiece(piece_type);

@@ -314,6 +314,9 @@ class ReversiBoard extends JPanel
 	  public static final int WIDTH  = BOARD_SIZE;	/* 盤面の横方向の区画数   */
 	  public static final int HEIGHT = BOARD_SIZE;	/* 盤面の縦方向の区画数   */
 
+	  private static final int OFFSET_SCRN_X = 50;
+	  private static final int OFFSET_SCRN_Y = 50;
+
 	  /* 駒を調べる方向の配列（上下左右斜めの計８方向） */
 	  public static final Point[] AROUND_8DIR = {
 		 new Point(  0, -1 ),
@@ -326,6 +329,7 @@ class ReversiBoard extends JPanel
 		 new Point( -1, -1 ),
 	  };
 
+	  private Dimension m_size_board;			/* 画面上の盤面のサイズ（ピクセル） */
 	  private ReversiPiece[][] m_piece_matrix;	/* 盤面の駒を管理する配列 */
 	  private Icon m_icon_hand;					/* 指し手のイメージアイコン */
 	  private boolean m_isVisibleHand;			/* 盤面上にハンドアイコンを表示するフラグ */
@@ -333,9 +337,11 @@ class ReversiBoard extends JPanel
 
 	  /********************************************************************************
 	   * @brief	constructor
+	   * @param [in]	size - 画面上の盤面のサイズ（ピクセル）
 	   */
-	  public ReversiBoard()
+	  public ReversiBoard(Dimension size)
 	  {
+		 m_size_board = new Dimension(size);
 		 m_piece_matrix = new ReversiPiece[8][8]; /* { null | Type.Black | Type.WHITE } */
 
 		 m_icon_hand = new ImageIcon("icon_hand.png");
@@ -355,6 +361,7 @@ class ReversiBoard extends JPanel
 
 				  @Override public void mouseDragged(MouseEvent e) 
 				  {
+					 /* TODO: 20180303  イベントが来てない！ ナゼ？ */
 					 System.out.println("mouseDragged()");
 					 doMouseMoved(e);
 				  }
@@ -368,9 +375,11 @@ class ReversiBoard extends JPanel
 				  }
 			});
 
-		 Dimension size = new Dimension(400, 400);	/* 画面上の盤面のサイズ（ピクセル） */
-		 setSize(size);
-		 setPreferredSize(size);
+		 int width  = size.width  + (OFFSET_SCRN_X * 2);
+		 int height = size.height + (OFFSET_SCRN_Y * 2);
+		 Dimension size_scrn = new Dimension(width, height);
+		 setSize(size_scrn);
+		 setPreferredSize(size_scrn);
 	  }
 
 	  /********************************************************************************
@@ -417,10 +426,9 @@ class ReversiBoard extends JPanel
 	   */
 	  private Point convertComponentPosToBoardPos(Point pt_scrn)
 	  {
-		 Dimension size = getSize();
-		 int d = size.width / BOARD_SIZE;
-		 int x = pt_scrn.x / d;
-		 int y = pt_scrn.y / d;
+		 int d = m_size_board.width / BOARD_SIZE;
+		 int x = (pt_scrn.x - OFFSET_SCRN_X) / d;
+		 int y = (pt_scrn.y - OFFSET_SCRN_Y) / d;
 		 Point pos = new Point(x, y);
 		 return pos;
 	  }
@@ -631,36 +639,66 @@ class ReversiBoard extends JPanel
 	  }
 
 	  /********************************************************************************
-	   * @brief	盤面を描画する
+	   * @brief	ゲーム画面（盤面、駒、指し手）を描画する
 	   */
 	  @Override /* JPanel.paintComponent */
 	  protected void paintComponent(Graphics g)
 	  {
+		 Rectangle rect_board = new Rectangle(m_size_board);
+		 rect_board.translate(OFFSET_SCRN_X, OFFSET_SCRN_X);
+		 int d = rect_board.width / BOARD_SIZE;
+
+		 /* ゲーム盤面をクリアする */
 		 Dimension size = getSize();
+		 Color color = new Color(112, 80, 32);
+		 g.setColor(color);
+		 g.fillRect(0, 0, size.width, size.height);
+
+		 /* 盤面を描画する */
+		 drawBoard(g, rect_board, d);
+
+		 /* 置かれている駒を描画する */
+		 drawPieces(g, rect_board, d);
+
+		 /* 人間の指し手の時に盤面上にマウスカーソルがあるなら、指し手を描画する */
+		 if (m_isVisibleHand)
+		 {
+			drawHand(g, rect_board, d);
+		 }
+	  }
+
+	  /********************************************************************************
+	   * @brief	盤面を描画する
+	   */
+	  private void drawBoard(Graphics g, Rectangle rect_board, int d)
+	  {
 		 Color color_board = new Color(0, 80, 0);
 		 Color color_line  = new Color(0, 48, 32);
 
-		 setForeground(color_board);
-		 g.fillRect(0, 0, size.width, size.height);
+		 g.setColor(color_board);
+		 g.fillRect(rect_board.x, rect_board.y, rect_board.width, rect_board.height);
 
-		 int x, y;
-		 int d = size.width / WIDTH;
-		 Dimension size_piece = new Dimension(d, d);
-
-		 /* 盤面を描画する */
 		 g.setColor(color_line);
+		 int x, y;
 		 for (y=0; y<HEIGHT; y++)
 		 {
-			int yy = y * d;
+			int yy = rect_board.y + (y * d);
 
 			for (x=0; x<WIDTH; x++)
 			{
-			   int xx = x * d;
+			   int xx = rect_board.x + (x * d);
 			   g.drawRect(xx, yy, d-1, d-1);
 			}
 		 }
+	  }
 
-		 /* 置かれている駒を描画する */
+	  /********************************************************************************
+	   * @brief		置かれている駒を描画する
+	   */
+	  private void drawPieces(Graphics g, Rectangle rect_board, int d)
+	  {
+		 Dimension size_piece = new Dimension(d, d);
+		 int x, y;
 		 for (y=0; y<HEIGHT; y++)
 		 {
 			for (x=0; x<WIDTH; x++)
@@ -669,36 +707,36 @@ class ReversiBoard extends JPanel
 			   
 			   if (piece != null)
 			   {
-				  int xx = x * d;
-				  int yy = y * d;
+				  int xx = rect_board.x + (x * d);
+				  int yy = rect_board.y + (y * d);
 				  piece.rendering(g, new Point(xx, yy), size_piece);
 			   }
 			}
 		 }
+	  }
 
-		 /* 人間の指し手の時に盤面上にマウスカーソルがあるなら、指し手を描画する */
-		 if (m_isVisibleHand)
+	  /********************************************************************************
+	   * @brief		指し手を描画する
+	   */
+	  private void drawHand(Graphics g, Rectangle rect_board, int d)
+	  {
+		 Point pt_cursor = MouseInfo.getPointerInfo().getLocation();	/* 画面上のマウス座標 */
+		 Point pt_component = getLocationOnScreen();					/* 画面上のComponent座標 */
+		 Point pt_hand = new Point(pt_cursor.x - pt_component.x, pt_cursor.y - pt_component.y);
+		 Point pt = new Point(pt_hand.x + rect_board.x, pt_hand.y + rect_board.y);
+
+		 if (rect_board.contains(pt_hand))
 		 {
-			Point pt_cursor = MouseInfo.getPointerInfo().getLocation();
-			Point pt_component = getLocationOnScreen();
-			pt_cursor.x -= pt_component.x;
-			pt_cursor.y -= pt_component.y;
+			Point pos = convertComponentPosToBoardPos(pt);
 
-			Rectangle rect = new Rectangle(size);
-			if (rect.contains(pt_cursor))
-			{
-			   Point pos = convertComponentPosToBoardPos(pt_cursor);
+			/* 駒を指す位置を枠で囲う */
+			g.setColor(Color.YELLOW);
+			g.drawRect(pos.x * d +1, pos.y * d +1, d-3, d-3);
 
-			   /* 駒を指す位置を枠で囲う */
-			   //Rectangle rc_frame = new Rectangle(pos.x * d, pos.y * d, d, d);
-			   g.setColor(Color.YELLOW);
-			   g.drawRect(pos.x * d +1, pos.y * d +1, d-3, d-3);
-
-			   /* マウスカーソルの先あたりをハンドの人差し指が指すように座標を調整する */
-			   int x_icon = pt_cursor.x - 18;
-			   int y_icon = pt_cursor.y + 6;
-			   m_icon_hand.paintIcon(this, g, x_icon, y_icon);
-			}
+			/* マウスカーソルの先あたりをハンドの人差し指が指すように座標を調整する */
+			int x_icon = pt_hand.x - 18;
+			int y_icon = pt_hand.y + 6;
+			m_icon_hand.paintIcon(this, g, x_icon, y_icon);
 		 }
 	  }
 

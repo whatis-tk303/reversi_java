@@ -109,7 +109,9 @@ class Application extends JFrame implements Runnable
 	   */
 	  public void init()
 	  {
-		 m_board = new ReversiBoard();
+		 Dimension size_board = new Dimension(400, 400);	/* 画面上の盤面のサイズ（ピクセル） */
+
+		 m_board = new ReversiBoard(size_board);
 		 m_status_panel = new StatusPanel();
 		 m_game = new GameManager(m_status_panel);
 		 m_players = new Players();
