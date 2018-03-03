@@ -201,12 +201,23 @@ class ReversiPiece implements AnimationRender
 		 m_anim_prop.setRate(AnimationProp.RATE_MAX);  /* 最終的にひっくり返った状態 */
 	  }
 
-	  /* @brief	駒の種別を取得する */
+	  /********************************************************************************
+	   * @brief	駒の種別を取得する
+	   */
 	  public Type getType()
 	  {
 		 return m_type;
 	  }
 
+	  /********************************************************************************
+	   * @brief	駒のイメージのサイズを取得する
+	   */
+	  public Dimension getImageSize()
+	  {
+		 Dimension size = new Dimension(m_type.icon.getIconWidth(), m_type.icon.getIconHeight());
+		 return size;
+	  }
+	  
 	  /********************************************************************************
 	   * @brief	指定された位置に駒を描画する
 	   * @param [in]	g    - 描画対象のグラフィックス
@@ -672,8 +683,8 @@ class ReversiBoard extends JPanel
 	   */
 	  private void drawBoard(Graphics g, Rectangle rect_board, int d)
 	  {
-		 Color color_board = new Color(0, 80, 0);
-		 Color color_line  = new Color(0, 48, 32);
+		 Color color_board = new Color(64, 196, 64);
+		 Color color_line  = new Color(128, 240, 128);
 
 		 g.setColor(color_board);
 		 g.fillRect(rect_board.x, rect_board.y, rect_board.width, rect_board.height);
@@ -730,7 +741,7 @@ class ReversiBoard extends JPanel
 			Point pos = convertComponentPosToBoardPos(pt);
 
 			/* 駒を指す位置を枠で囲う */
-			g.setColor(Color.YELLOW);
+			g.setColor(Color.RED);
 			g.drawRect(pos.x * d +1, pos.y * d +1, d-3, d-3);
 
 			/* マウスカーソルの先あたりをハンドの人差し指が指すように座標を調整する */

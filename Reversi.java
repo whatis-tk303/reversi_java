@@ -135,6 +135,7 @@ class Application extends JFrame implements Runnable
 			System.out.println(m_players.second);
 
 			/* ゲーム開始 */
+			m_status_panel.setPlayers(m_players.first, m_players.second);
 			m_game.start(m_board, m_players);
 
 			/* 結果表示： 勝敗を表示する */
