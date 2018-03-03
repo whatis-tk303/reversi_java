@@ -33,12 +33,28 @@ class StatusNotifier extends Observable
 }
 
 
+/********************************************************************************
+ * @brief	指し手のプレイヤーを通知する
+ */
+class PlayerTurnNotifier extends Observable
+{
+	  /* @brief		
+	   */
+	  public void notify(Player player)
+	  {
+		 setChanged();
+		 notifyObservers((Object)player);
+	  }
+}
+
+
 /*********************************************************************************
  * @brief	ゲーム状況を表示するパネル
  */
 public class StatusPanel extends JPanel implements Observer
 {
 	  private JLabel m_label_status;
+	  private JLabel m_label_turn;
 
 	  /********************************************************************************
 	   * @brief	constructor
@@ -49,6 +65,9 @@ public class StatusPanel extends JPanel implements Observer
 
 		 m_label_status = new JLabel("???");
 		 add(m_label_status);
+
+		 m_label_turn = new JLabel("turn: ???");
+		 add(m_label_turn);
 	  }
 
 	  /********************************************************************************
@@ -66,6 +85,11 @@ public class StatusPanel extends JPanel implements Observer
 			String str = String.format("B:%d, W:%d", num_black, num_white);
 			m_label_status.setText(str);
 		 }
+		 else if (notifier instanceof PlayerTurnNotifier)
+		 {
+			Player player = (Player)arg;
+			String str = String.format("turn: %s", player);
+			m_label_turn.setText(str);
+		 }
 	  }
-
 }

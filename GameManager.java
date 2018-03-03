@@ -53,6 +53,7 @@ public class GameManager
 	  private Players m_players;				/** プレイヤー２人             */
 	  private Player m_current_player;			/** 現在のプレイヤー           */
 	  private StatusNotifier m_status_notifier;	/** ゲームステータスを通知する */
+	  private PlayerTurnNotifier m_player_notifier;	/** 指し手のプレイヤーを通知する */
 
 	  /********************************************************************************
 	   * @brief	constructor
@@ -62,6 +63,9 @@ public class GameManager
 	  {
 		 m_status_notifier = new StatusNotifier();
 		 m_status_notifier.addObserver(obs);
+
+		 m_player_notifier =new PlayerTurnNotifier();
+		 m_player_notifier.addObserver(obs);
 	  }
 
 	  /********************************************************************************
@@ -113,6 +117,9 @@ public class GameManager
 			/* 人間の指し手の（自動プレイできない）場合はハンドを表示する */
 			boolean visible_hand = !m_current_player.canAutoPlay();
 			m_board.enableVisibleHand(visible_hand);
+
+			/* 現在の指し手のプレイヤーを通知する */
+			m_player_notifier.notify(m_current_player);
 
 			/* 現在のゲームステータスを通知する */
 			m_status_notifier.notify(m_board);
