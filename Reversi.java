@@ -89,11 +89,26 @@ class Application extends JFrame implements Runnable
 	  private boolean showResult(ReversiBoard board, Players players)
 	  {
 		 /* 再度ゲームを開始する、アプリを終了するのを選択するダイアログ */
+
+		 /* 選択肢｛ 0:再度ゲームを開始する、1:ゲームをやめる ｝ */
 		 Object[] options = {"play next game", "exit game"};
+
+		 int num_black = board.countPieces(ReversiPiece.Type.BLACK);
+		 int num_white = board.countPieces(ReversiPiece.Type.WHITE);
+		 String str_msg;
+		 if (num_black == num_white)
+		 { /* 引き分け */
+			str_msg = String.format("draw");
+		 }
+		 else
+		 {
+			str_msg = String.format("%s player won !", (num_white < num_black) ? "BLACK" : "WHITE");
+		 }
+		 str_msg += "\nDo you continue game ?";
 
 		 int ret = JOptionPane.showOptionDialog(
 			this,
-			"are you continue game ?",
+			str_msg,
 			"play result:",
 			JOptionPane.DEFAULT_OPTION,
 			JOptionPane.WARNING_MESSAGE,

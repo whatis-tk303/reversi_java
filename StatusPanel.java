@@ -7,9 +7,8 @@
  *	class StatusPanel : ゲーム状況を表示する
  *	＜責務＞
  *	  - ゲーム状況を表示する
- *			???				???
- *			???				???
- *			???				???
+ *			setPlayers		プレイヤーを設定する（先手・後手）
+ *			update			ゲームステータスが変化した通知を受ける
  */
 
 import java.util.*;
@@ -48,7 +47,6 @@ class PlayerTurnNotifier extends Observable
 }
 
 
-
 /*********************************************************************************
  * @brief	プレイヤー情報に駒を表示するパネル
  */
@@ -78,7 +76,7 @@ class PiecePanel extends JPanel
 
 
 /*********************************************************************************
- * @brief	プレイヤー情報を表示するパネル
+ * @brief	プレイヤー情報（１人分）を表示するパネル
  */
 class PlayerInfoPanel extends JPanel
 {
@@ -154,6 +152,7 @@ class PlayerInfoPanel extends JPanel
 	  }
 }
 
+
 /*********************************************************************************
  * @brief	ゲーム状況を表示するパネル
  */
@@ -170,11 +169,13 @@ public class StatusPanel extends JPanel implements Observer
 	  {
 		 Box hbox = new Box(BoxLayout.X_AXIS);
 		 
+		 /* 先手プレイヤー（黒） */
 		 m_player_black = new PlayerInfoPanel(new ReversiPiece(ReversiPiece.Type.BLACK));
 		 hbox.add(m_player_black);
 
-		 hbox.add(Box.createHorizontalStrut(100));
+		 hbox.add(Box.createHorizontalStrut(100)); /* 少し隙間を空ける */
 
+		 /* 後手プレイヤー（白） */
 		 m_player_white = new PlayerInfoPanel(new ReversiPiece(ReversiPiece.Type.WHITE));
 		 hbox.add(m_player_white);
 
@@ -182,9 +183,9 @@ public class StatusPanel extends JPanel implements Observer
 	  }
 
 	  /********************************************************************************
-	   * @brief		プレイヤー名を設定する
-	   * @param [in]	name_1st - 先手（黒）のプレイヤー名
-	   * @param [in]	name_2nd - 後手（白）のプレイヤー名
+	   * @brief		プレイヤーを設定する
+	   * @param [in]	name_1st - 先手（黒）のプレイヤー
+	   * @param [in]	name_2nd - 後手（白）のプレイヤー
 	   */
 	  public void setPlayers(Player player_1st, Player player_2nd)
 	  {
@@ -193,24 +194,22 @@ public class StatusPanel extends JPanel implements Observer
 	  }
 
 	  /********************************************************************************
-	   * @brief	ゲームステータスが変化した
+	   * @brief	ゲームステータスが変化した通知を受ける
 	   */
 	  @Override /* Observer */
 	  public void update(Observable notifier, Object arg)
 	  {
 		 if (notifier instanceof StatusNotifier)
-		 {
+		 { /* 盤面上の駒の数を更新する */
 			ReversiBoard board = (ReversiBoard)arg;
 			int num_black = board.countPieces(ReversiPiece.Type.BLACK);
 			int num_white = board.countPieces(ReversiPiece.Type.WHITE);
-
 			m_player_black.setPieces(num_black);
 			m_player_white.setPieces(num_white);
 		 }
 		 else if (notifier instanceof PlayerTurnNotifier)
-		 {
+		 { /* 指し手を更新する */
 			Player player = (Player)arg;
-
 			ReversiPiece.Type type = player.getPieceType();
 			boolean is_turn_black = (type == ReversiPiece.Type.BLACK);
 			m_player_black.setMyTurn(is_turn_black);
