@@ -25,7 +25,7 @@ class Application extends JFrame implements Runnable
 	  private ReversiBoard m_board;
 	  private GameManager m_game;
 	  private Players m_players;
-
+	  private GameSelect.Type m_selected_game;
 
 	  /********************************************************************************
 	   * @brief		constructor
@@ -42,44 +42,37 @@ class Application extends JFrame implements Runnable
 	  private void prepare(Players players)
 	  {
 		 /* 先手・後手を決めるダイアログ */
-		 Object[] options = {
-			"Human(A) vs Human(B)",
-			"Human vs Computer",
-			"Computer vs Human",
-			"Computer(A) vs Computer(B)",
-		 };
+		 JDialog dlg = InfoDialog.createPrepareDialog(this, players, m_selected_game);
+		 dlg.setVisible(true);
 
-		 int ret = JOptionPane.showOptionDialog(
-			this,
-			"???",
-			"select play type:",
-			JOptionPane.DEFAULT_OPTION,
-			JOptionPane.WARNING_MESSAGE,
-			null,
-			options,
-			options[0]);
+		 m_selected_game = ((GameSelect)dlg).getSelected();
 
-		 switch(ret)
-		 {
-			case 0: /* "Human(A) vs Human(B)" */
-			   players.first  = new HumanPlayer(m_board, "Human(B)",    ReversiPiece.Type.BLACK);
-			   players.second = new HumanPlayer(m_board, "Human(W)",    ReversiPiece.Type.WHITE);
-			   break;
-			case 1: /* "Human vs Computer" */
-			   players.first  = new HumanPlayer(m_board, "Human(B)",    ReversiPiece.Type.BLACK);
-			   players.second = new AutoPlayer(m_board,  "Computer(W)", ReversiPiece.Type.WHITE);
-			   break;
-			case 2: /* "Computer vs Human" */
-			   players.first  = new AutoPlayer(m_board,  "Computer(B)", ReversiPiece.Type.BLACK);
-			   players.second = new HumanPlayer(m_board, "Human(W)",    ReversiPiece.Type.WHITE);
-			   break;
-			case 3: /* "Computer(A) vs Computer(B)" */
-			   players.first  = new AutoPlayer(m_board,  "Computer(B)", ReversiPiece.Type.BLACK);
-			   players.second = new AutoPlayer(m_board,  "Computer(W)", ReversiPiece.Type.WHITE);
-			   break;
+		 if (m_selected_game == GameSelect.Type.EXIT_GAME)
+		 { /* ゲーム終了 */
+			System.exit(0);
+		 }
+		 else if (m_selected_game == GameSelect.Type.HUMAN_VS_HUMAN)
+		 { /* "Human(A) vs Human(B)" */
+			players.first  = new HumanPlayer(m_board, "Human(B)",    ReversiPiece.Type.BLACK);
+			players.second = new HumanPlayer(m_board, "Human(W)",    ReversiPiece.Type.WHITE);
+		 }
+		 else if (m_selected_game == GameSelect.Type.HUMAN_VS_COMPUTER)
+		 { /* "Human vs Computer" */
+			players.first  = new HumanPlayer(m_board, "Human(B)",    ReversiPiece.Type.BLACK);
+			players.second = new AutoPlayer(m_board,  "Computer(W)", ReversiPiece.Type.WHITE);
+		 }
+		 else if (m_selected_game == GameSelect.Type.COMPUTER_VS_HUMAN)
+		 { /* "Computer vs Human" */
+			players.first  = new AutoPlayer(m_board,  "Computer(B)", ReversiPiece.Type.BLACK);
+			players.second = new HumanPlayer(m_board, "Human(W)",    ReversiPiece.Type.WHITE);
+		 }
+		 else if (m_selected_game == GameSelect.Type.COMPUTER_VS_COMPUTER)
+		 { /* "Computer(A) vs Computer(B)" */
+			players.first  = new AutoPlayer(m_board,  "Computer(B)", ReversiPiece.Type.BLACK);
+			players.second = new AutoPlayer(m_board,  "Computer(W)", ReversiPiece.Type.WHITE);
 		 }
 
-		 System.out.printf("ret = %d\n", ret);
+		 return;
 	  }
 
 	  /********************************************************************************

@@ -23,4 +23,4 @@ exec: $(TARGET).class
 
 
 # dependency
-Reversi.class : Player.class
+Reversi.class : Player.class InfoDialog.class

@@ -23,6 +23,13 @@
  *	  - 自動操作プレイヤー（コンピューター）ができる操作を担う
  *			(constructor)	
  *			doThink			駒を置く場所を考える（盤面状況から自動で判断する）
+ *
+ *	class Players : ゲームプレイヤー（２人）を保持する
+ *	＜責務＞
+ *	  - ゲームプレイヤー（２人）を保持する
+ *			(constructor)	
+ *			setFirst		先手プレイヤーをセットする
+ *			setSecond		後手プレイヤーをセットする
  */
 
 import java.util.*;
@@ -328,4 +335,23 @@ class AutoPlayer extends Player
 
 		 return false;  /* 駒を置けるところはなかった */
 	  }
+}
+
+
+/*********************************************************************************
+ * @brief	プレイヤー２人
+ */
+class Players
+{
+	  public Player first;
+	  public Player second;
+
+	  /* constructor */
+	  public Players() {}
+
+	  /**/
+	  public void setFirst(Player p) { first = p; }
+
+	  /**/
+	  public void setSecond(Player p) { second = p; }
 }
