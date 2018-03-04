@@ -50,9 +50,50 @@ class PlayerTurnNotifier extends Observable
 /*********************************************************************************
  * @brief	プレイヤー情報に駒を表示するパネル
  */
+class PlayerPanel extends JPanel
+{
+	  private PlayerType m_player_type;
+
+	  /********************************************************************************
+	   * @brief	constructor
+	   */
+	  public PlayerPanel(PlayerType player_type)
+	  {
+		 m_player_type = player_type;
+		 Icon icon = m_player_type.getIcon();
+		 Dimension size = new Dimension(icon.getIconWidth(), icon.getIconHeight());
+		 setSize(size);
+		 setPreferredSize(size);
+	  }
+
+	  /********************************************************************************
+	   * @brief		プレイヤータイプを設定する
+	   */
+	  public void setPlayerType(PlayerType player_type)
+	  {
+		 m_player_type = player_type;
+	  }
+
+	  /********************************************************************************
+	   * @brief		描画する
+	   */
+	  @Override /* JPanel */
+	  protected void paintComponent(Graphics g)
+	  {
+		 Dimension size = getSize();
+		 Point pos = new Point(0, 0);
+		 m_player_type.getIcon().paintIcon(null, g, 0, 0);
+	  }
+}
+
+
+/*********************************************************************************
+ * @brief	プレイヤー情報に駒を表示するパネル
+ */
 class PiecePanel extends JPanel
 {
 	  private ReversiPiece m_piece;
+	  private PlayerType m_player_type;
 
 	  /********************************************************************************
 	   * @brief	constructor
@@ -65,6 +106,9 @@ class PiecePanel extends JPanel
 		 setPreferredSize(size);
 	  }
 
+	  /********************************************************************************
+	   * @brief		描画する
+	   */
 	  @Override /* JPanel */
 	  protected void paintComponent(Graphics g)
 	  {
@@ -82,6 +126,7 @@ class PlayerInfoPanel extends JPanel
 {
 	  private Player m_player;
 	  private PiecePanel m_piece_panel;
+	  private PlayerPanel m_player_panel;
 	  private JLabel m_label_name;
 	  private JLabel m_label_num;
 	  private boolean m_is_my_turn;
@@ -95,6 +140,9 @@ class PlayerInfoPanel extends JPanel
 
 		 m_piece_panel = new PiecePanel(piece);
 		 hbox.add(m_piece_panel);
+
+		 m_player_panel = new PlayerPanel(PlayerType.COMPUTER);
+		 hbox.add(m_player_panel);
 
 		 hbox.add(Box.createHorizontalStrut(10));
 
@@ -119,6 +167,7 @@ class PlayerInfoPanel extends JPanel
 	  {
 		 m_player = player;
 		 m_label_name.setText(player.toString());
+		 m_player_panel.setPlayerType(player.getPlayerType());
 	  }
 
 	  /********************************************************************************
@@ -147,7 +196,7 @@ class PlayerInfoPanel extends JPanel
 	  protected void paintComponent(Graphics g)
 	  {
 		 Dimension size = getSize();
-		 g.setColor(m_is_my_turn ? Color.CYAN : Color.LIGHT_GRAY);
+		 g.setColor(m_is_my_turn ? Color.ORANGE : Color.LIGHT_GRAY);
 		 g.fillRect(0, 0, size.width, size.height);
 	  }
 }

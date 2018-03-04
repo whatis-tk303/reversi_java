@@ -689,6 +689,7 @@ class ReversiBoard extends JPanel
 		 g.setColor(color_board);
 		 g.fillRect(rect_board.x, rect_board.y, rect_board.width, rect_board.height);
 
+		 /* ‹î‚ğ’u‚­‹æØ‚èü‚ğŠiqó‚Éü‚ğˆø‚­ */
 		 g.setColor(color_line);
 		 int x, y;
 		 for (y=0; y<HEIGHT; y++)
@@ -700,6 +701,22 @@ class ReversiBoard extends JPanel
 			   int xx = rect_board.x + (x * d);
 			   g.drawRect(xx, yy, d-1, d-1);
 			}
+		 }
+
+		 /* ‹÷‚©‚çÎ‚ß‚É2ŒÂ–Ú‚Æ3ŒÂ–Ú‚Ì‹«ŠE“_‚É‚Í–Úˆó‚ğ•`‰æ‚·‚é */
+		 final int thick = 8;
+		 final int n = 2;
+		 final int m = (thick - n) / 2 + 1;
+		 final int pt_x[] = { 2, 6, 2, 6 };
+		 final int pt_y[] = { 2, 2, 6, 6 };
+		 for (int i=0; i<4; i++)
+		 {
+			int xx = rect_board.x + (pt_x[i] * d) - (thick / 2);
+			int yy = rect_board.y + (pt_y[i] * d) - (thick / 2);
+			g.setColor(color_line);
+			g.fillRect(xx, yy, thick, thick);
+			g.setColor(color_board);
+			g.fillRect(xx+n, yy+n, m, m);
 		 }
 	  }
 

@@ -34,6 +34,33 @@
 
 import java.util.*;
 import java.awt.*;
+import javax.swing.*;
+
+
+/*********************************************************************************
+ * @brief	リバーシのプレイヤー（抽象クラス）
+ */
+enum PlayerType
+{
+   HUMAN("player_human.png"),
+   COMPUTER("player_computer.png")
+   ;
+
+   private String image_file;
+   private Icon icon;
+
+   private PlayerType(String fname)
+   {
+	  this.image_file = fname;
+	  this.icon = new ImageIcon(fname);
+   }
+
+   /**/
+   public Icon getIcon()
+   {
+	  return this.icon;
+   }
+}
 
 
 /*********************************************************************************
@@ -41,27 +68,23 @@ import java.awt.*;
  */
 abstract class Player
 {
-	  public enum Type {
-		 HUMAN,
-		 COMPUTER
-	  }
-
 	  protected ReversiBoard m_board;			/* 盤面 */
 	  protected String m_name;					/* プレイヤーの名前 */
-	  protected Type m_player_type;				/* プレイヤー { HUMAN | COMPUTER} */
+	  //protected Type m_player_type;				/* プレイヤー { HUMAN | COMPUTER} */
+	  protected PlayerType m_player_type;				/* プレイヤー { HUMAN | COMPUTER} */
 	  protected ReversiPiece.Type m_piece_type;	/* 自分の駒の色 { BLACK | WHITE } ※ 黒が先手 */
 	  private   boolean m_canAutoPlay;			/* true:自動プレイヤー（コンピューター） */
 
 	  /********************************************************************************
 	   * @brief		constructor
 	   */
-	  public Player(ReversiBoard board, String name, Player.Type player_type, ReversiPiece.Type piece_type)
+	  public Player(ReversiBoard board, String name, PlayerType player_type, ReversiPiece.Type piece_type)
 	  {
 		 m_board = board;
 		 m_name = name;
 		 m_player_type = player_type;
 		 m_piece_type = piece_type;
-		 m_canAutoPlay = (player_type == Type.COMPUTER);
+		 m_canAutoPlay = (player_type == PlayerType.COMPUTER);
 	  }
 
 	  /********************************************************************************
@@ -91,6 +114,12 @@ abstract class Player
 	  public ReversiPiece.Type getPieceType()
 	  {
 		 return m_piece_type;
+	  }
+
+	  /* @brief		プレイヤータイプを取得する */
+	  public PlayerType getPlayerType()
+	  {
+		 return m_player_type;
 	  }
 
 	  /* @brief	駒の種別を取得する */
@@ -123,7 +152,7 @@ class HumanPlayer extends Player
 	  /* @brief	constructor */
 	  public HumanPlayer(ReversiBoard board, String name, ReversiPiece.Type piece_type)
 	  {
-		 super(board, name, Player.Type.HUMAN, piece_type);
+		 super(board, name, PlayerType.HUMAN, piece_type);
 	  }
 
 	  /********************************************************************************
@@ -213,7 +242,7 @@ class AutoPlayer extends Player
 	  */
 	  public AutoPlayer(ReversiBoard board, String name, ReversiPiece.Type piece_type)
 	  {
-		 super(board, name, Player.Type.COMPUTER, piece_type);
+		 super(board, name, PlayerType.COMPUTER, piece_type);
 	  }
 
 	  /********************************************************************************
