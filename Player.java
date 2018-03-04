@@ -195,9 +195,6 @@ class HumanPlayer extends Player
 		 {
 			for (Point pos : m_candidate_pos_map.keySet())
 			{
-			   System.out.printf("can place (%d,%d) == (%d,%d) ?\n",
-								 pos_place.x, pos_place.y, pos.x, pos.y);
-
 			   if (pos.equals(pos_place))
 			   {
 				  /* ‚±‚±‚É‚Í‹î‚ð’u‚¯‚é */

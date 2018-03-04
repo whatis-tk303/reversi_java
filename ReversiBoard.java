@@ -328,6 +328,8 @@ class ReversiBoard extends JPanel
 	  private static final int OFFSET_SCRN_X = 50;
 	  private static final int OFFSET_SCRN_Y = 50;
 
+	  private static Icon ICON_CAN_PLACE = new ImageIcon("can_place.png");
+
 	  /* 駒を調べる方向の配列（上下左右斜めの計８方向） */
 	  public static final Point[] AROUND_8DIR = {
 		 new Point(  0, -1 ),
@@ -672,7 +674,7 @@ class ReversiBoard extends JPanel
 		 drawPieces(g, rect_board, d);
 
 		 /* 人間の指し手の時に盤面上にマウスカーソルがあるなら、指し手を描画する */
-		 if (m_isVisibleHand)
+		 if (m_isVisibleHand && (m_player_to_notify != null))
 		 {
 			drawHand(g, rect_board, d);
 		 }
@@ -751,15 +753,21 @@ class ReversiBoard extends JPanel
 		 Point pt_cursor = MouseInfo.getPointerInfo().getLocation();	/* 画面上のマウス座標 */
 		 Point pt_component = getLocationOnScreen();					/* 画面上のComponent座標 */
 		 Point pt_hand = new Point(pt_cursor.x - pt_component.x, pt_cursor.y - pt_component.y);
-		 Point pt = new Point(pt_hand.x + rect_board.x, pt_hand.y + rect_board.y);
 
 		 if (rect_board.contains(pt_hand))
 		 {
-			Point pos = convertComponentPosToBoardPos(pt);
+			Point pos = convertComponentPosToBoardPos(pt_hand);
+			Point pt = new Point(rect_board.x + (pos.x * d), rect_board.y + (pos.y * d));
+
+			/* 駒が置ける位置に目印を描画する */
+			if (m_player_to_notify.isAvailablePos(pos))
+			{
+			   ICON_CAN_PLACE.paintIcon(this, g, pt.x, pt.y);
+			}
 
 			/* 駒を指す位置を枠で囲う */
 			g.setColor(Color.RED);
-			g.drawRect(pos.x * d +1, pos.y * d +1, d-3, d-3);
+			g.drawRect(pt.x + 1, pt.y + 1, d-3, d-3);//(pos.x * d +1, pos.y * d +1, d-3, d-3);
 
 			/* マウスカーソルの先あたりをハンドの人差し指が指すように座標を調整する */
 			int x_icon = pt_hand.x - 18;
