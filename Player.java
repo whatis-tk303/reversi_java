@@ -272,6 +272,10 @@ class AutoPlayer extends Player
 			if (checkAvailablePos_02(pos_trgt)) { return pos_trgt; }
 		 }
 
+		 /* 中割りできる（中央の４つを優先的にひっくり返せる）ところ */
+		 pos = checkSplitCenter(candidate_pos_map);
+		 if (pos != null) { return pos; }
+		 
 		 /* 良いところに置けない → ランダムで置けるところを選択して置く */
 		 int num = candidate_pos_map.size();
 		 int idx = (new Random()).nextInt(num);
@@ -360,6 +364,47 @@ class AutoPlayer extends Player
 		 }
 
 		 return false;  /* 駒を置けるところはなかった */
+	  }
+
+	  /********************************************************************************
+	   * @brief		中割りできる（中央の４つを優先的にひっくり返せる）ところを調べる
+	   * 			なるべく多くひっくり返せるところを選択する
+	   * @return	true: 置ける位置
+	   */
+	  private Point checkSplitCenter(HashMap<Point, Vector<Point>> candidate_pos_map)
+	  {
+		 Point pos_desided = null;	/* 置ける候補 */
+		 Vector<Point> pos_ary = new Vector<Point>();
+		 pos_ary.addAll(makeContrastPos(new Point(3, 3)));
+		 pos_ary.addAll(makeContrastPos(new Point(2, 2)));
+		 pos_ary.addAll(makeContrastPos(new Point(3, 2)));
+		 pos_ary.addAll(makeContrastPos(new Point(2, 3)));
+
+		 int max_num_place = 0;  /* たくさん置ける数を数えるカウンタ */
+
+		 for (Point pos_candidate : candidate_pos_map.keySet())
+		 {
+			int num_place = 0;
+			for (Point pos_center : pos_ary)
+			{
+			   for (Point pos_reverse : candidate_pos_map.get(pos_candidate))
+			   {
+				  System.out.printf("*** 返せる？ {%2d,%2d}=?{%2d,%2d}\n",
+									pos_reverse.x, pos_reverse.y, pos_center.x, pos_center.y);
+				  if (pos_center.equals(pos_reverse))
+				  {
+					 num_place += 1;
+					 if (max_num_place < num_place)
+					 {
+						max_num_place = num_place;
+						pos_desided = pos_candidate;
+					 }
+				  }
+			   }
+			}
+		 }
+
+		 return pos_desided;  /* 駒を置きたいところ（nullなら置けない） */
 	  }
 }
 

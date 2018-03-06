@@ -142,8 +142,6 @@ public class GameManager
 		 HashMap<Point, Vector<Point>> candidate_pos_map;
 		 candidate_pos_map = m_board.getCandidatePos(player.getPieceType());
 
-		 System.out.println(candidate_pos_map); /* for debug: 20180220  ひっくり返せる候補 */
-
 		 /* 現在のプレイヤーが駒を置く位置を考える */
 		 m_board.setNotifier(player);
 		 Point pos = player.think(candidate_pos_map);
