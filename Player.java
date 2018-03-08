@@ -275,7 +275,11 @@ class AutoPlayer extends Player
 		 /* 中割りできる（中央の４つを優先的にひっくり返せる）ところ */
 		 pos = checkSplitCenter(candidate_pos_map);
 		 if (pos != null) { return pos; }
-		 
+
+		 /* ４隅とその隣以外で置けるところ */
+		 pos = checkAvoidAroundCorner(candidate_pos_map);
+		 if (pos != null) { return pos; }
+
 		 /* 良いところに置けない → ランダムで置けるところを選択して置く */
 		 int num = candidate_pos_map.size();
 		 int idx = (new Random()).nextInt(num);
@@ -369,16 +373,15 @@ class AutoPlayer extends Player
 	  /********************************************************************************
 	   * @brief		中割りできる（中央の４つを優先的にひっくり返せる）ところを調べる
 	   * 			なるべく多くひっくり返せるところを選択する
-	   * @return	true: 置ける位置
+	   * @return	 置ける位置
 	   */
 	  private Point checkSplitCenter(HashMap<Point, Vector<Point>> candidate_pos_map)
 	  {
 		 Point pos_desided = null;	/* 置ける候補 */
 		 Vector<Point> pos_ary = new Vector<Point>();
 		 pos_ary.addAll(makeContrastPos(new Point(3, 3)));
-		 pos_ary.addAll(makeContrastPos(new Point(2, 2)));
-		 pos_ary.addAll(makeContrastPos(new Point(3, 2)));
-		 pos_ary.addAll(makeContrastPos(new Point(2, 3)));
+		 pos_ary.addAll(makeContrastPos(new Point(3, 1)));
+		 pos_ary.addAll(makeContrastPos(new Point(1, 3)));
 
 		 int max_num_place = 0;  /* たくさん置ける数を数えるカウンタ */
 
@@ -399,6 +402,46 @@ class AutoPlayer extends Player
 						max_num_place = num_place;
 						pos_desided = pos_candidate;
 					 }
+				  }
+			   }
+			}
+		 }
+
+		 return pos_desided;  /* 駒を置きたいところ（nullなら置けない） */
+	  }
+
+
+	  /********************************************************************************
+	   * @brief		４隅とその隣には置きたくない
+	   * @return	４隅以外で置ける位置
+	   */
+	  private Point checkAvoidAroundCorner(HashMap<Point, Vector<Point>> candidate_pos_map)
+	  {
+		 Point pos_desided = null;	/* 置ける候補 */
+		 Vector<Point> pos_ary = new Vector<Point>();  /* 置きたくない位置  */
+		 pos_ary.addAll(makeContrastPos(new Point(1, 1)));
+		 pos_ary.addAll(makeContrastPos(new Point(1, 0)));
+		 pos_ary.addAll(makeContrastPos(new Point(0, 1)));
+
+		 int max_num_place = 0;  /* たくさん置ける数を数えるカウンタ */
+
+		 for (Point pos_candidate : candidate_pos_map.keySet())
+		 {
+			int num_place = 0;
+			for (Point pos_corner : pos_ary)
+			{
+			   if (pos_corner.equals(pos_candidate))
+			   { /* 置きたくないので置かない */
+				  continue;
+			   }
+
+			   for (Point pos_reverse : candidate_pos_map.get(pos_candidate))
+			   {
+				  num_place += 1;
+				  if (max_num_place < num_place)
+				  {
+					 max_num_place = num_place;
+					 pos_desided = pos_candidate;
 				  }
 			   }
 			}
